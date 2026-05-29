@@ -63,7 +63,7 @@ function Game() {
 
   const add = (i: number) => {
     setCart((c) => c.map((q, idx) => (idx === i ? q + 1 : q)));
-    flash(`+1 ${ITEMS[i].name}`);
+    flash(`+1 ${labelOf(ITEMS[i])}`);
   };
   const remove = (i: number) => {
     setCart((c) => c.map((q, idx) => (idx === i ? Math.max(0, q - 1) : q)));
