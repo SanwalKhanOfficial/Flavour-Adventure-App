@@ -372,11 +372,21 @@ function DishCard({
 }) {
   return (
     <div className="pixel-border group relative overflow-hidden rounded-lg bg-card transition hover:-translate-y-1">
-      <div
-        className="flex h-28 items-center justify-center"
-        style={{ background: `color-mix(in oklab, ${item.color} 30%, var(--color-card))` }}
-      >
-        <span className="text-6xl drop-shadow-[3px_3px_0_rgba(0,0,0,0.6)] transition group-hover:animate-float">
+      <div className="relative h-40 overflow-hidden">
+        <img
+          src={item.image}
+          alt={item.name}
+          loading="lazy"
+          width={600}
+          height={600}
+          className="h-full w-full object-cover transition group-hover:scale-105"
+          style={{ imageRendering: "auto" }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: `linear-gradient(180deg, transparent 55%, color-mix(in oklab, ${item.color} 40%, transparent))` }}
+        />
+        <span className="pixel-border-sm absolute left-2 top-2 rounded-md bg-background/80 px-2 py-1 text-lg backdrop-blur">
           {item.emoji}
         </span>
         {qty > 0 && (
@@ -385,6 +395,7 @@ function DishCard({
           </span>
         )}
       </div>
+
 
       <div className="p-3">
         <div className="flex items-center justify-between gap-2">
