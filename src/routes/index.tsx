@@ -10,10 +10,10 @@ import waffleImg from "@/assets/dishes/waffle.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Pixel Bites — Arcade Food Ordering" },
+      { title: "El Rincón — Arcade Food Ordering" },
       { name: "description", content: "An arcade-style restaurant ordering game. Pick your dishes, fill your cart, and clear the bill!" },
-      { property: "og:title", content: "Pixel Bites — Arcade Food Ordering" },
-      { property: "og:description", content: "Order food, arcade-game style." },
+      { property: "og:title", content: "El Rincón — Arcade Food Ordering" },
+      { property: "og:description", content: "Khao Peo Zindigi Jeo — order food, arcade-game style." },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -27,12 +27,13 @@ export const Route = createFileRoute("/")({
 type Item = { name: string; price: number; emoji: string; image: string; color: string };
 
 const ITEMS: Item[] = [
-  { name: "Lasagna", price: 800, emoji: "🍝", image: lasagnaImg, color: "var(--color-primary)" },
-  { name: "Pasta", price: 600, emoji: "🍜", image: pastaImg, color: "var(--color-secondary)" },
-  { name: "Loaded Fries", price: 500, emoji: "🍟", image: friesImg, color: "var(--color-coin)" },
-  { name: "Beef Karahi", price: 1500, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)" },
-  { name: "Singaporean Rice", price: 900, emoji: "🍚", image: riceImg, color: "var(--color-success)" },
-  { name: "Ice Cream Waffle", price: 700, emoji: "🍦", image: waffleImg, color: "var(--color-accent)" },
+  { name: "Lasagna", price: 1800, emoji: "🍝", image: lasagnaImg, color: "var(--color-primary)" },
+  { name: "Pasta", price: 1200, emoji: "🍜", image: pastaImg, color: "var(--color-secondary)" },
+  { name: "Loaded Fries", price: 650, emoji: "🍟", image: friesImg, color: "var(--color-coin)" },
+  { name: "Beef Karahi (Half)", price: 1300, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)" },
+  { name: "Beef Karahi (Full)", price: 2400, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)" },
+  { name: "Singaporean Rice", price: 950, emoji: "🍚", image: riceImg, color: "var(--color-success)" },
+  { name: "Ice Cream Waffle", price: 850, emoji: "🍦", image: waffleImg, color: "var(--color-accent)" },
 ];
 
 type Stage = "intro" | "menu" | "bill";
@@ -135,14 +136,13 @@ function Header({
           onClick={() => setStage("intro")}
           className="flex items-center gap-2"
         >
-          <span className="text-2xl animate-float">🕹️</span>
+          <span className="text-2xl animate-float">🍽️</span>
           <h1 className="text-stroke text-sm text-primary sm:text-base">
-            PIXEL BITES
+            EL RINCÓN
           </h1>
         </button>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <Badge label={`LVL ${stage === "intro" ? 1 : stage === "menu" ? 2 : 3}`} tone="accent" />
           <Badge label={`x${itemCount}`} icon="🛒" tone="secondary" />
           <div className="pixel-border-sm flex items-center gap-2 rounded-md bg-background px-3 py-1.5">
             <span className="animate-coin text-lg">🪙</span>
@@ -190,13 +190,10 @@ function IntroScreen({
       <div className="mb-6 text-center">
         <div className="mb-3 text-6xl animate-float">👨‍🍳</div>
         <h2 className="text-stroke pixel text-2xl text-primary sm:text-3xl">
-          PRESS START
+          EL RINCÓN
         </h2>
         <p className="mt-3 text-xl text-muted-foreground">
-          Welcome, hungry hero. Enter your stats to begin the quest.
-        </p>
-        <p className="mt-1 pixel text-[10px] text-accent animate-blink">
-          ▶ INSERT COIN
+          Khao Peo Zindigi Jeo — enter your details to begin your order.
         </p>
       </div>
 
