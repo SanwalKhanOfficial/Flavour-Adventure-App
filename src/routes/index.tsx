@@ -345,7 +345,7 @@ function MenuScreen({
                 q > 0 ? (
                   <div key={i} className="flex items-center justify-between gap-2">
                     <span className="truncate">
-                      {ITEMS[i].emoji} {ITEMS[i].name} ×{q}
+                      {ITEMS[i].emoji} {labelOf(ITEMS[i])} ×{q}
                     </span>
                     <span className="pixel text-[10px] text-coin">
                       Rs.{q * ITEMS[i].price}
