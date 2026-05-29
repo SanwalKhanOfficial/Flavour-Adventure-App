@@ -304,16 +304,33 @@ function MenuScreen({
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {ITEMS.map((it, i) => (
-            <DishCard
-              key={it.name}
-              item={it}
-              qty={cart[i]}
-              onAdd={() => onAdd(i)}
-              onRemove={() => onRemove(i)}
-              onClear={() => onClear(i)}
-            />
-          ))}
+          {ITEMS.map((it, i) => {
+            if (i === KARAHI_FULL) return null;
+            if (i === KARAHI_HALF) {
+              return (
+                <KarahiCard
+                  key="karahi"
+                  half={ITEMS[KARAHI_HALF]}
+                  full={ITEMS[KARAHI_FULL]}
+                  qtyHalf={cart[KARAHI_HALF]}
+                  qtyFull={cart[KARAHI_FULL]}
+                  onAdd={(size) => onAdd(size === "Half" ? KARAHI_HALF : KARAHI_FULL)}
+                  onRemove={(size) => onRemove(size === "Half" ? KARAHI_HALF : KARAHI_FULL)}
+                  onClearAll={() => { onClear(KARAHI_HALF); onClear(KARAHI_FULL); }}
+                />
+              );
+            }
+            return (
+              <DishCard
+                key={it.name}
+                item={it}
+                qty={cart[i]}
+                onAdd={() => onAdd(i)}
+                onRemove={() => onRemove(i)}
+                onClear={() => onClear(i)}
+              />
+            );
+          })}
         </div>
       </div>
 
