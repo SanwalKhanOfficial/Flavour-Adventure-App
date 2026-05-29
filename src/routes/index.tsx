@@ -24,17 +24,21 @@ export const Route = createFileRoute("/")({
   component: Game,
 });
 
-type Item = { name: string; price: number; emoji: string; image: string; color: string };
+type Item = { name: string; price: number; emoji: string; image: string; color: string; size?: string };
 
 const ITEMS: Item[] = [
   { name: "Lasagna", price: 1800, emoji: "🍝", image: lasagnaImg, color: "var(--color-primary)" },
   { name: "Pasta", price: 1200, emoji: "🍜", image: pastaImg, color: "var(--color-secondary)" },
   { name: "Loaded Fries", price: 650, emoji: "🍟", image: friesImg, color: "var(--color-coin)" },
-  { name: "Beef Karahi (Half)", price: 1300, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)" },
-  { name: "Beef Karahi (Full)", price: 2400, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)" },
+  { name: "Beef Karahi", price: 1300, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)", size: "Half" },
+  { name: "Beef Karahi", price: 2400, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)", size: "Full" },
   { name: "Singaporean Rice", price: 950, emoji: "🍚", image: riceImg, color: "var(--color-success)" },
   { name: "Ice Cream Waffle", price: 850, emoji: "🍦", image: waffleImg, color: "var(--color-accent)" },
 ];
+
+const labelOf = (it: Item) => it.size ? `${it.name} (${it.size})` : it.name;
+const KARAHI_HALF = 3;
+const KARAHI_FULL = 4;
 
 type Stage = "intro" | "menu" | "bill";
 type Customer = { name: string; phone: string; address: string };
