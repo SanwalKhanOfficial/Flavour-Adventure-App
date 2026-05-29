@@ -1,5 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
+import lasagnaImg from "@/assets/dishes/lasagna.jpg";
+import pastaImg from "@/assets/dishes/pasta.jpg";
+import friesImg from "@/assets/dishes/fries.jpg";
+import karahiImg from "@/assets/dishes/karahi.jpg";
+import riceImg from "@/assets/dishes/rice.jpg";
+import waffleImg from "@/assets/dishes/waffle.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -18,15 +24,15 @@ export const Route = createFileRoute("/")({
   component: Game,
 });
 
-type Item = { name: string; price: number; emoji: string; color: string };
+type Item = { name: string; price: number; emoji: string; image: string; color: string };
 
 const ITEMS: Item[] = [
-  { name: "Lasagna", price: 800, emoji: "🍝", color: "var(--color-primary)" },
-  { name: "Pasta", price: 600, emoji: "🍜", color: "var(--color-secondary)" },
-  { name: "Loaded Fries", price: 500, emoji: "🍟", color: "var(--color-coin)" },
-  { name: "Beef Karahi", price: 1500, emoji: "🍛", color: "var(--color-destructive)" },
-  { name: "Singaporean Rice", price: 900, emoji: "🍚", color: "var(--color-success)" },
-  { name: "Ice Cream Waffle", price: 700, emoji: "🍦", color: "var(--color-accent)" },
+  { name: "Lasagna", price: 800, emoji: "🍝", image: lasagnaImg, color: "var(--color-primary)" },
+  { name: "Pasta", price: 600, emoji: "🍜", image: pastaImg, color: "var(--color-secondary)" },
+  { name: "Loaded Fries", price: 500, emoji: "🍟", image: friesImg, color: "var(--color-coin)" },
+  { name: "Beef Karahi", price: 1500, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)" },
+  { name: "Singaporean Rice", price: 900, emoji: "🍚", image: riceImg, color: "var(--color-success)" },
+  { name: "Ice Cream Waffle", price: 700, emoji: "🍦", image: waffleImg, color: "var(--color-accent)" },
 ];
 
 type Stage = "intro" | "menu" | "bill";
@@ -366,11 +372,21 @@ function DishCard({
 }) {
   return (
     <div className="pixel-border group relative overflow-hidden rounded-lg bg-card transition hover:-translate-y-1">
-      <div
-        className="flex h-28 items-center justify-center"
-        style={{ background: `color-mix(in oklab, ${item.color} 30%, var(--color-card))` }}
-      >
-        <span className="text-6xl drop-shadow-[3px_3px_0_rgba(0,0,0,0.6)] transition group-hover:animate-float">
+      <div className="relative h-40 overflow-hidden">
+        <img
+          src={item.image}
+          alt={item.name}
+          loading="lazy"
+          width={600}
+          height={600}
+          className="h-full w-full object-cover transition group-hover:scale-105"
+          style={{ imageRendering: "auto" }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: `linear-gradient(180deg, transparent 55%, color-mix(in oklab, ${item.color} 40%, transparent))` }}
+        />
+        <span className="pixel-border-sm absolute left-2 top-2 rounded-md bg-background/80 px-2 py-1 text-lg backdrop-blur">
           {item.emoji}
         </span>
         {qty > 0 && (
@@ -379,6 +395,7 @@ function DishCard({
           </span>
         )}
       </div>
+
 
       <div className="p-3">
         <div className="flex items-center justify-between gap-2">
