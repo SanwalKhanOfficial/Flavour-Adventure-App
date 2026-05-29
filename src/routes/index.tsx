@@ -24,17 +24,21 @@ export const Route = createFileRoute("/")({
   component: Game,
 });
 
-type Item = { name: string; price: number; emoji: string; image: string; color: string };
+type Item = { name: string; price: number; emoji: string; image: string; color: string; size?: string };
 
 const ITEMS: Item[] = [
   { name: "Lasagna", price: 1800, emoji: "🍝", image: lasagnaImg, color: "var(--color-primary)" },
   { name: "Pasta", price: 1200, emoji: "🍜", image: pastaImg, color: "var(--color-secondary)" },
   { name: "Loaded Fries", price: 650, emoji: "🍟", image: friesImg, color: "var(--color-coin)" },
-  { name: "Beef Karahi (Half)", price: 1300, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)" },
-  { name: "Beef Karahi (Full)", price: 2400, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)" },
+  { name: "Beef Karahi", price: 1300, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)", size: "Half" },
+  { name: "Beef Karahi", price: 2400, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)", size: "Full" },
   { name: "Singaporean Rice", price: 950, emoji: "🍚", image: riceImg, color: "var(--color-success)" },
   { name: "Ice Cream Waffle", price: 850, emoji: "🍦", image: waffleImg, color: "var(--color-accent)" },
 ];
+
+const labelOf = (it: Item) => it.size ? `${it.name} (${it.size})` : it.name;
+const KARAHI_HALF = 3;
+const KARAHI_FULL = 4;
 
 type Stage = "intro" | "menu" | "bill";
 type Customer = { name: string; phone: string; address: string };
@@ -59,7 +63,7 @@ function Game() {
 
   const add = (i: number) => {
     setCart((c) => c.map((q, idx) => (idx === i ? q + 1 : q)));
-    flash(`+1 ${ITEMS[i].name}`);
+    flash(`+1 ${labelOf(ITEMS[i])}`);
   };
   const remove = (i: number) => {
     setCart((c) => c.map((q, idx) => (idx === i ? Math.max(0, q - 1) : q)));
@@ -228,7 +232,7 @@ function IntroScreen({
           className="primary-glow pixel-border w-full rounded-md bg-primary px-6 py-4 pixel text-sm text-primary-foreground transition active:translate-y-0.5"
           style={{ backgroundImage: "var(--gradient-primary)" }}
         >
-          ▶ START GAME
+          ▶ START YOUR ORDER
         </button>
       </div>
     </section>
@@ -300,16 +304,33 @@ function MenuScreen({
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {ITEMS.map((it, i) => (
-            <DishCard
-              key={it.name}
-              item={it}
-              qty={cart[i]}
-              onAdd={() => onAdd(i)}
-              onRemove={() => onRemove(i)}
-              onClear={() => onClear(i)}
-            />
-          ))}
+          {ITEMS.map((it, i) => {
+            if (i === KARAHI_FULL) return null;
+            if (i === KARAHI_HALF) {
+              return (
+                <KarahiCard
+                  key="karahi"
+                  half={ITEMS[KARAHI_HALF]}
+                  full={ITEMS[KARAHI_FULL]}
+                  qtyHalf={cart[KARAHI_HALF]}
+                  qtyFull={cart[KARAHI_FULL]}
+                  onAdd={(size) => onAdd(size === "Half" ? KARAHI_HALF : KARAHI_FULL)}
+                  onRemove={(size) => onRemove(size === "Half" ? KARAHI_HALF : KARAHI_FULL)}
+                  onClearAll={() => { onClear(KARAHI_HALF); onClear(KARAHI_FULL); }}
+                />
+              );
+            }
+            return (
+              <DishCard
+                key={it.name}
+                item={it}
+                qty={cart[i]}
+                onAdd={() => onAdd(i)}
+                onRemove={() => onRemove(i)}
+                onClear={() => onClear(i)}
+              />
+            );
+          })}
         </div>
       </div>
 
@@ -324,7 +345,7 @@ function MenuScreen({
                 q > 0 ? (
                   <div key={i} className="flex items-center justify-between gap-2">
                     <span className="truncate">
-                      {ITEMS[i].emoji} {ITEMS[i].name} ×{q}
+                      {ITEMS[i].emoji} {labelOf(ITEMS[i])} ×{q}
                     </span>
                     <span className="pixel text-[10px] text-coin">
                       Rs.{q * ITEMS[i].price}
@@ -449,81 +470,239 @@ function BillScreen({
   onBack: () => void;
   onNewGame: () => void;
 }) {
+  const now = new Date();
+  const orderNo = useMemo(() => Math.floor(100000 + Math.random() * 900000), []);
+  const subtotal = total;
+  const tax = Math.round(subtotal * 0.05);
+  const grand = subtotal + tax;
   return (
-    <section className="mx-auto max-w-xl animate-pop">
+    <section className="mx-auto max-w-md animate-pop">
       <div className="mb-4 text-center">
-        <div className="text-6xl animate-float">🏆</div>
-        <h2 className="text-stroke pixel mt-2 text-xl text-coin sm:text-2xl">
-          QUEST COMPLETE
-        </h2>
-        <p className="pixel mt-2 text-[10px] text-accent animate-blink">
-          ▶ RECEIPT UNLOCKED
-        </p>
+        <div className="text-5xl animate-float">🧾</div>
+        <h2 className="text-stroke pixel mt-2 text-lg text-coin">ORDER CONFIRMED</h2>
       </div>
 
-      <div className="pixel-border rounded-lg bg-card p-6">
-        <div className="mb-4 space-y-1 text-lg">
-          <Row k="Player" v={customer.name} />
-          <Row k="Phone" v={customer.phone} />
-          <Row k="Address" v={customer.address} />
-        </div>
+      <div
+        className="relative bg-[#fdfaf1] text-neutral-800 shadow-2xl"
+        style={{
+          fontFamily: "'VT323', ui-monospace, monospace",
+          backgroundImage:
+            "repeating-linear-gradient(0deg, rgba(0,0,0,0.04) 0 1px, transparent 1px 4px)",
+          clipPath:
+            "polygon(0 0, 100% 0, 100% calc(100% - 12px), 96% 100%, 92% calc(100% - 12px), 88% 100%, 84% calc(100% - 12px), 80% 100%, 76% calc(100% - 12px), 72% 100%, 68% calc(100% - 12px), 64% 100%, 60% calc(100% - 12px), 56% 100%, 52% calc(100% - 12px), 48% 100%, 44% calc(100% - 12px), 40% 100%, 36% calc(100% - 12px), 32% 100%, 28% calc(100% - 12px), 24% 100%, 20% calc(100% - 12px), 16% 100%, 12% calc(100% - 12px), 8% 100%, 4% calc(100% - 12px), 0 100%)",
+        }}
+      >
+        <div className="px-6 pt-6 pb-10">
+          <div className="text-center">
+            <h3 className="text-3xl tracking-widest">EL RINCÓN</h3>
+            <p className="text-base leading-tight">Khao Peo Zindigi Jeo</p>
+            <p className="text-sm opacity-70">— * — * — * — * —</p>
+          </div>
 
-        <div className="border-y-2 border-dashed border-border py-3">
-          <h3 className="pixel mb-2 text-[10px] text-accent">ORDERED LOOT</h3>
-          {cart.every((q) => q === 0) ? (
-            <p className="text-muted-foreground">No items ordered.</p>
-          ) : (
-            <ul className="space-y-1 text-lg">
-              {cart.map((q, i) =>
+          <div className="mt-3 flex justify-between text-base">
+            <span>Order #{orderNo}</span>
+            <span>{now.toLocaleDateString()}</span>
+          </div>
+          <div className="flex justify-between text-base">
+            <span>Cashier: AUTO</span>
+            <span>{now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+          </div>
+
+          <div className="my-2 border-t border-dashed border-neutral-500" />
+
+          <div className="text-base space-y-0.5">
+            <ReceiptRow k="Name" v={customer.name} />
+            <ReceiptRow k="Phone" v={customer.phone} />
+            <ReceiptRow k="Addr" v={customer.address} />
+          </div>
+
+          <div className="my-2 border-t border-dashed border-neutral-500" />
+
+          <div className="flex justify-between text-base font-bold">
+            <span>ITEM</span>
+            <span>AMOUNT</span>
+          </div>
+
+          <ul className="mt-1 text-base">
+            {cart.every((q) => q === 0) ? (
+              <li className="opacity-70">No items ordered.</li>
+            ) : (
+              cart.map((q, i) =>
                 q > 0 ? (
-                  <li key={i} className="flex justify-between">
-                    <span>
-                      {ITEMS[i].emoji} {ITEMS[i].name} ×{q}
-                    </span>
-                    <span className="pixel text-[10px] text-coin">
-                      Rs.{q * ITEMS[i].price}
-                    </span>
+                  <li key={i}>
+                    <div className="flex justify-between">
+                      <span>{labelOf(ITEMS[i])}</span>
+                      <span>Rs.{q * ITEMS[i].price}</span>
+                    </div>
+                    <div className="text-sm opacity-70 pl-2">
+                      {q} × Rs.{ITEMS[i].price}
+                    </div>
                   </li>
                 ) : null,
-              )}
-            </ul>
-          )}
-        </div>
+              )
+            )}
+          </ul>
 
-        <div className="mt-4 flex items-center justify-between">
-          <span className="pixel text-xs text-muted-foreground">TOTAL</span>
-          <span className="pixel text-lg text-coin">Rs.{total}</span>
-        </div>
+          <div className="my-2 border-t border-dashed border-neutral-500" />
 
-        <div className="mt-6 flex gap-3">
-          <button
-            onClick={onBack}
-            className="pixel-border-sm flex-1 rounded-md bg-muted px-4 py-3 pixel text-[10px]"
-          >
-            ◀ EDIT ORDER
-          </button>
-          <button
-            onClick={onNewGame}
-            className="pixel-border flex-1 rounded-md bg-primary px-4 py-3 pixel text-[10px] text-primary-foreground"
-            style={{ backgroundImage: "var(--gradient-primary)" }}
-          >
-            NEW GAME ▶
-          </button>
+          <div className="text-base space-y-0.5">
+            <div className="flex justify-between"><span>Subtotal</span><span>Rs.{subtotal}</span></div>
+            <div className="flex justify-between"><span>Tax (5%)</span><span>Rs.{tax}</span></div>
+          </div>
+
+          <div className="my-2 border-t border-double border-neutral-700" />
+
+          <div className="flex justify-between text-2xl font-bold">
+            <span>TOTAL</span>
+            <span>Rs.{grand}</span>
+          </div>
+
+          <div className="mt-4 text-center text-base">
+            <p>** PAID — THANK YOU **</p>
+            <p className="opacity-70">Visit us again ♥</p>
+          </div>
+
+          <div className="mt-3 flex justify-center">
+            <div className="flex gap-[3px]">
+              {Array.from({ length: 28 }).map((_, k) => (
+                <div key={k} style={{ width: k % 3 === 0 ? 3 : 2, height: 28, background: "#111" }} />
+              ))}
+            </div>
+            <span className="sr-only">barcode</span>
+          </div>
+          <p className="text-center text-sm tracking-[0.3em] mt-1">{orderNo}-ELR</p>
         </div>
       </div>
 
-      <p className="mt-4 text-center pixel text-[10px] text-muted-foreground">
-        THANK YOU FOR PLAYING ♥
-      </p>
+      <div className="mt-6 flex gap-3">
+        <button
+          onClick={onBack}
+          className="pixel-border-sm flex-1 rounded-md bg-muted px-4 py-3 pixel text-[10px]"
+        >
+          ◀ EDIT ORDER
+        </button>
+        <button
+          onClick={onNewGame}
+          className="pixel-border flex-1 rounded-md bg-primary px-4 py-3 pixel text-[10px] text-primary-foreground"
+          style={{ backgroundImage: "var(--gradient-primary)" }}
+        >
+          NEW ORDER ▶
+        </button>
+      </div>
     </section>
   );
 }
 
-function Row({ k, v }: { k: string; v: string }) {
+function ReceiptRow({ k, v }: { k: string; v: string }) {
   return (
-    <div className="flex gap-3">
-      <span className="pixel min-w-20 text-[10px] text-muted-foreground">{k}</span>
+    <div className="flex gap-2">
+      <span className="min-w-14 opacity-70">{k}:</span>
       <span className="flex-1 break-words">{v || "—"}</span>
+    </div>
+  );
+}
+
+function KarahiCard({
+  half,
+  full,
+  qtyHalf,
+  qtyFull,
+  onAdd,
+  onRemove,
+  onClearAll,
+}: {
+  half: Item;
+  full: Item;
+  qtyHalf: number;
+  qtyFull: number;
+  onAdd: (size: "Half" | "Full") => void;
+  onRemove: (size: "Half" | "Full") => void;
+  onClearAll: () => void;
+}) {
+  const [size, setSize] = useState<"Half" | "Full">("Half");
+  const active = size === "Half" ? half : full;
+  const qty = size === "Half" ? qtyHalf : qtyFull;
+  const totalQty = qtyHalf + qtyFull;
+
+  return (
+    <div className="pixel-border group relative overflow-hidden rounded-lg bg-card transition hover:-translate-y-1">
+      <div className="relative h-40 overflow-hidden">
+        <img
+          src={half.image}
+          alt="Beef Karahi"
+          loading="lazy"
+          width={600}
+          height={600}
+          className="h-full w-full object-cover transition group-hover:scale-105"
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: `linear-gradient(180deg, transparent 55%, color-mix(in oklab, ${half.color} 40%, transparent))` }}
+        />
+        <span className="pixel-border-sm absolute left-2 top-2 rounded-md bg-background/80 px-2 py-1 text-lg backdrop-blur">
+          🍛
+        </span>
+        {totalQty > 0 && (
+          <span className="pixel-border-sm absolute right-2 top-2 rounded-md bg-secondary px-2 py-1 pixel text-[10px] text-secondary-foreground">
+            ×{totalQty}
+          </span>
+        )}
+      </div>
+
+      <div className="p-3">
+        <div className="flex items-center justify-between gap-2">
+          <h4 className="pixel text-[11px] leading-tight text-foreground">Beef Karahi</h4>
+          <span className="pixel text-[10px] text-coin">Rs.{active.price}</span>
+        </div>
+
+        <div className="mt-2 grid grid-cols-2 gap-1">
+          {(["Half", "Full"] as const).map((s) => {
+            const it = s === "Half" ? half : full;
+            const q = s === "Half" ? qtyHalf : qtyFull;
+            const isActive = size === s;
+            return (
+              <button
+                key={s}
+                onClick={() => setSize(s)}
+                className={`pixel-border-sm rounded-md px-2 py-1.5 pixel text-[9px] transition ${
+                  isActive ? "bg-accent text-accent-foreground" : "bg-background"
+                }`}
+              >
+                {s.toUpperCase()} · Rs.{it.price}
+                {q > 0 && <span className="ml-1 text-coin">×{q}</span>}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-3 flex items-center gap-2">
+          <button
+            onClick={() => onRemove(size)}
+            disabled={qty === 0}
+            className="pixel-border-sm h-9 w-9 rounded-md bg-muted pixel text-xs disabled:opacity-40"
+          >
+            −
+          </button>
+          <div className="pixel-border-sm flex h-9 flex-1 items-center justify-center rounded-md bg-background pixel text-[10px]">
+            {size} ×{qty}
+          </div>
+          <button
+            onClick={() => onAdd(size)}
+            className="pixel-border-sm h-9 w-9 rounded-md bg-primary pixel text-xs text-primary-foreground"
+            style={{ backgroundImage: "var(--gradient-primary)" }}
+          >
+            +
+          </button>
+          {totalQty > 0 && (
+            <button
+              onClick={onClearAll}
+              className="pixel-border-sm h-9 rounded-md bg-destructive px-2 pixel text-[10px] text-destructive-foreground"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
