@@ -232,7 +232,7 @@ function IntroScreen({
           className="primary-glow pixel-border w-full rounded-md bg-primary px-6 py-4 pixel text-sm text-primary-foreground transition active:translate-y-0.5"
           style={{ backgroundImage: "var(--gradient-primary)" }}
         >
-          ▶ START GAME
+          ▶ START YOUR ORDER
         </button>
       </div>
     </section>
