@@ -24,36 +24,78 @@ export const Route = createFileRoute("/")({
   component: Game,
 });
 
-type Item = { name: string; price: number; emoji: string; image: string; color: string; size?: string };
+type Tag = "Chef's Pick" | "Spicy" | "New" | "Bestseller" | "Veg";
+type Item = {
+  name: string;
+  price: number;
+  emoji: string;
+  image: string;
+  color: string;
+  size?: string;
+  tags?: Tag[];
+  desc?: string;
+};
 
 const ITEMS: Item[] = [
-  { name: "Lasagna", price: 1800, emoji: "🍝", image: lasagnaImg, color: "var(--color-primary)" },
-  { name: "Pasta", price: 1200, emoji: "🍜", image: pastaImg, color: "var(--color-secondary)" },
-  { name: "Loaded Fries", price: 650, emoji: "🍟", image: friesImg, color: "var(--color-coin)" },
-  { name: "Beef Karahi", price: 1300, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)", size: "Half" },
-  { name: "Beef Karahi", price: 2400, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)", size: "Full" },
-  { name: "Singaporean Rice", price: 950, emoji: "🍚", image: riceImg, color: "var(--color-success)" },
-  { name: "Ice Cream Waffle", price: 850, emoji: "🍦", image: waffleImg, color: "var(--color-accent)" },
+  { name: "Lasagna", price: 1800, emoji: "🍝", image: lasagnaImg, color: "var(--color-primary)",
+    tags: ["Chef's Pick"], desc: "Layered pasta, rich meat ragù & molten cheese." },
+  { name: "Pasta", price: 1200, emoji: "🍜", image: pastaImg, color: "var(--color-secondary)",
+    tags: ["Bestseller"], desc: "Creamy Alfredo penne with olives & herbs." },
+  { name: "Loaded Fries", price: 650, emoji: "🍟", image: friesImg, color: "var(--color-coin)",
+    tags: ["New"], desc: "Crispy fries, chicken, mozzarella & jalapeños." },
+  { name: "Beef Karahi", price: 1300, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)",
+    size: "Half", tags: ["Spicy", "Chef's Pick"], desc: "Slow-cooked beef in tomato & green chili masala." },
+  { name: "Beef Karahi", price: 2400, emoji: "🍛", image: karahiImg, color: "var(--color-destructive)",
+    size: "Full", tags: ["Spicy", "Chef's Pick"], desc: "Slow-cooked beef in tomato & green chili masala." },
+  { name: "Singaporean Rice", price: 950, emoji: "🍚", image: riceImg, color: "var(--color-success)",
+    tags: ["Veg"], desc: "Wok-tossed rice with veggies & sweet-spicy sauce." },
+  { name: "Ice Cream Waffle", price: 850, emoji: "🍦", image: waffleImg, color: "var(--color-accent)",
+    tags: ["New"], desc: "Golden Belgian waffle topped with vanilla scoop." },
 ];
 
 const labelOf = (it: Item) => it.size ? `${it.name} (${it.size})` : it.name;
 const KARAHI_HALF = 3;
 const KARAHI_FULL = 4;
 
+const PROMOS: Record<string, { off: number; label: string }> = {
+  HUNGRY10: { off: 0.10, label: "10% off" },
+  FIRST20: { off: 0.20, label: "20% off · first order" },
+  RINCON15: { off: 0.15, label: "15% off · loyalty" },
+};
+
 type Stage = "intro" | "menu" | "bill";
-type Customer = { name: string; phone: string; address: string };
+type OrderType = "delivery" | "pickup";
+type PayMethod = "cod" | "card";
+type Customer = {
+  name: string;
+  phone: string;
+  address: string;
+  notes: string;
+  orderType: OrderType;
+  payment: PayMethod;
+};
 
 function Game() {
   const [stage, setStage] = useState<Stage>("intro");
-  const [customer, setCustomer] = useState<Customer>({ name: "", phone: "", address: "" });
+  const [customer, setCustomer] = useState<Customer>({
+    name: "", phone: "", address: "", notes: "",
+    orderType: "delivery", payment: "cod",
+  });
   const [cart, setCart] = useState<number[]>(() => ITEMS.map(() => 0));
   const [toast, setToast] = useState<string | null>(null);
+  const [promoInput, setPromoInput] = useState("");
+  const [promo, setPromo] = useState<{ code: string; off: number; label: string } | null>(null);
 
-  const total = useMemo(
+  const subtotal = useMemo(
     () => cart.reduce((s, q, i) => s + q * ITEMS[i].price, 0),
     [cart],
   );
   const itemCount = cart.reduce((s, q) => s + q, 0);
+  const discount = promo ? Math.round(subtotal * promo.off) : 0;
+  const deliveryFee = customer.orderType === "delivery" && subtotal > 0 ? 150 : 0;
+  const taxable = Math.max(0, subtotal - discount);
+  const tax = Math.round(taxable * 0.05);
+  const total = taxable + tax + deliveryFee;
 
   const flash = (msg: string) => {
     setToast(msg);
@@ -70,6 +112,15 @@ function Game() {
   };
   const clearItem = (i: number) =>
     setCart((c) => c.map((q, idx) => (idx === i ? 0 : q)));
+
+  const applyPromo = () => {
+    const code = promoInput.trim().toUpperCase();
+    if (!code) return;
+    const p = PROMOS[code];
+    if (!p) { flash("Invalid promo code"); return; }
+    setPromo({ code, off: p.off, label: p.label });
+    flash(`✓ ${p.label} applied`);
+  };
 
   return (
     <main className="relative min-h-screen w-full overflow-hidden">
@@ -88,7 +139,17 @@ function Game() {
         {stage === "menu" && (
           <MenuScreen
             cart={cart}
+            subtotal={subtotal}
+            discount={discount}
+            deliveryFee={deliveryFee}
+            tax={tax}
             total={total}
+            promo={promo}
+            promoInput={promoInput}
+            setPromoInput={setPromoInput}
+            applyPromo={applyPromo}
+            removePromo={() => { setPromo(null); setPromoInput(""); flash("Promo removed"); }}
+            orderType={customer.orderType}
             onAdd={add}
             onRemove={remove}
             onClear={clearItem}
@@ -100,11 +161,17 @@ function Game() {
           <BillScreen
             customer={customer}
             cart={cart}
+            subtotal={subtotal}
+            discount={discount}
+            deliveryFee={deliveryFee}
+            tax={tax}
             total={total}
+            promo={promo}
             onBack={() => setStage("menu")}
             onNewGame={() => {
               setCart(ITEMS.map(() => 0));
-              setCustomer({ name: "", phone: "", address: "" });
+              setCustomer({ name: "", phone: "", address: "", notes: "", orderType: "delivery", payment: "cod" });
+              setPromo(null); setPromoInput("");
               setStage("intro");
             }}
           />
@@ -125,7 +192,6 @@ function Game() {
 function Header({
   itemCount,
   total,
-  stage,
   setStage,
 }: {
   itemCount: number;
@@ -134,16 +200,17 @@ function Header({
   setStage: (s: Stage) => void;
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b-4 border-black bg-card/80 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b-4 border-black bg-card/80 backdrop-blur print:hidden">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <button
           onClick={() => setStage("intro")}
           className="flex items-center gap-2"
         >
           <span className="text-2xl animate-float">🍽️</span>
-          <h1 className="text-stroke text-sm text-primary sm:text-base">
-            EL RINCÓN
-          </h1>
+          <div className="text-left leading-none">
+            <h1 className="text-stroke text-sm text-primary sm:text-base">EL RINCÓN</h1>
+            <span className="text-xs text-muted-foreground">Khao Peo Zindigi Jeo</span>
+          </div>
         </button>
 
         <div className="flex items-center gap-2 sm:gap-3">
@@ -168,6 +235,21 @@ function Badge({ label, icon, tone }: { label: string; icon?: string; tone: "acc
   );
 }
 
+function TagPill({ t }: { t: Tag }) {
+  const styles: Record<Tag, string> = {
+    "Chef's Pick": "bg-primary text-primary-foreground",
+    "Spicy": "bg-destructive text-destructive-foreground",
+    "New": "bg-accent text-accent-foreground",
+    "Bestseller": "bg-coin text-primary-foreground",
+    "Veg": "bg-success text-success-foreground",
+  };
+  return (
+    <span className={`pixel-border-sm rounded px-1.5 py-0.5 pixel text-[8px] ${styles[t]}`}>
+      {t.toUpperCase()}
+    </span>
+  );
+}
+
 /* ---------------- Intro / Player Setup ---------------- */
 
 function IntroScreen({
@@ -183,8 +265,9 @@ function IntroScreen({
 
   const submit = () => {
     if (!customer.name.trim()) return setErr("Enter your player name!");
-    if (!/^\d+$/.test(customer.phone)) return setErr("Phone must be digits only!");
-    if (!customer.address.trim()) return setErr("Enter a delivery address!");
+    if (!/^\d{7,}$/.test(customer.phone)) return setErr("Enter a valid phone number!");
+    if (customer.orderType === "delivery" && !customer.address.trim())
+      return setErr("Enter a delivery address!");
     setErr("");
     onStart();
   };
@@ -202,6 +285,27 @@ function IntroScreen({
       </div>
 
       <div className="pixel-border rounded-lg bg-card p-6">
+        {/* Order type */}
+        <div className="mb-4">
+          <span className="mb-1.5 block pixel text-[10px] text-accent">ORDER TYPE</span>
+          <div className="grid grid-cols-2 gap-2">
+            {(["delivery", "pickup"] as const).map((t) => {
+              const active = customer.orderType === t;
+              return (
+                <button
+                  key={t}
+                  onClick={() => setCustomer({ ...customer, orderType: t })}
+                  className={`pixel-border-sm rounded-md px-3 py-2 pixel text-[10px] transition ${
+                    active ? "bg-accent text-accent-foreground" : "bg-background"
+                  }`}
+                >
+                  {t === "delivery" ? "🛵 DELIVERY" : "🏃 PICKUP"}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <Field
           label="Player Name"
           value={customer.name}
@@ -215,13 +319,43 @@ function IntroScreen({
           placeholder="03001234567"
           inputMode="numeric"
         />
+        {customer.orderType === "delivery" && (
+          <Field
+            label="Delivery Address"
+            value={customer.address}
+            onChange={(v) => setCustomer({ ...customer, address: v })}
+            placeholder="House, Street, City"
+            textarea
+          />
+        )}
         <Field
-          label="Delivery Address"
-          value={customer.address}
-          onChange={(v) => setCustomer({ ...customer, address: v })}
-          placeholder="House, Street, City"
+          label="Special Instructions (optional)"
+          value={customer.notes}
+          onChange={(v) => setCustomer({ ...customer, notes: v })}
+          placeholder="Less spicy, extra cheese, ring the bell..."
           textarea
         />
+
+        {/* Payment */}
+        <div className="mb-4">
+          <span className="mb-1.5 block pixel text-[10px] text-accent">PAYMENT METHOD</span>
+          <div className="grid grid-cols-2 gap-2">
+            {(["cod", "card"] as const).map((m) => {
+              const active = customer.payment === m;
+              return (
+                <button
+                  key={m}
+                  onClick={() => setCustomer({ ...customer, payment: m })}
+                  className={`pixel-border-sm rounded-md px-3 py-2 pixel text-[10px] transition ${
+                    active ? "bg-accent text-accent-foreground" : "bg-background"
+                  }`}
+                >
+                  {m === "cod" ? "💵 CASH ON DELIVERY" : "💳 CARD"}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {err && (
           <p className="mb-3 pixel text-[10px] text-destructive">⚠ {err}</p>
@@ -234,6 +368,10 @@ function IntroScreen({
         >
           ▶ START YOUR ORDER
         </button>
+
+        <p className="mt-3 text-center text-sm text-muted-foreground">
+          🎁 Try promo <span className="pixel text-[10px] text-coin">HUNGRY10</span> at checkout
+        </p>
       </div>
     </section>
   );
@@ -282,19 +420,45 @@ function Field({
 
 function MenuScreen({
   cart,
+  subtotal,
+  discount,
+  deliveryFee,
+  tax,
   total,
+  promo,
+  promoInput,
+  setPromoInput,
+  applyPromo,
+  removePromo,
+  orderType,
   onAdd,
   onRemove,
   onClear,
   onCheckout,
 }: {
   cart: number[];
+  subtotal: number;
+  discount: number;
+  deliveryFee: number;
+  tax: number;
   total: number;
+  promo: { code: string; off: number; label: string } | null;
+  promoInput: string;
+  setPromoInput: (v: string) => void;
+  applyPromo: () => void;
+  removePromo: () => void;
+  orderType: OrderType;
   onAdd: (i: number) => void;
   onRemove: (i: number) => void;
   onClear: (i: number) => void;
   onCheckout: () => void;
 }) {
+  const [filter, setFilter] = useState<"All" | Tag>("All");
+  const visibleIdx = ITEMS.map((it, i) => ({ it, i }))
+    .filter(({ it, i }) => i !== KARAHI_FULL && (filter === "All" || (it.tags ?? []).includes(filter)));
+
+  const filters: ("All" | Tag)[] = ["All", "Chef's Pick", "Bestseller", "Spicy", "New", "Veg"];
+
   return (
     <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div>
@@ -303,9 +467,22 @@ function MenuScreen({
           <span className="pixel text-[10px] text-muted-foreground">CHOOSE WISELY</span>
         </div>
 
+        <div className="mb-4 flex flex-wrap gap-2">
+          {filters.map((f) => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`pixel-border-sm rounded-md px-2.5 py-1 pixel text-[9px] transition ${
+                filter === f ? "bg-primary text-primary-foreground" : "bg-card"
+              }`}
+            >
+              {f.toUpperCase()}
+            </button>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {ITEMS.map((it, i) => {
-            if (i === KARAHI_FULL) return null;
+          {visibleIdx.map(({ it, i }) => {
             if (i === KARAHI_HALF) {
               return (
                 <KarahiCard
@@ -331,6 +508,9 @@ function MenuScreen({
               />
             );
           })}
+          {visibleIdx.length === 0 && (
+            <p className="col-span-full text-center text-muted-foreground">No dishes match this filter.</p>
+          )}
         </div>
       </div>
 
@@ -356,12 +536,46 @@ function MenuScreen({
             )}
           </div>
 
+          {/* Promo */}
           <div className="mt-4 border-t-2 border-dashed border-border pt-3">
-            <div className="flex items-center justify-between">
-              <span className="pixel text-[10px] text-muted-foreground">TOTAL</span>
-              <span className="pixel text-base text-coin">Rs.{total}</span>
-            </div>
+            {promo ? (
+              <div className="flex items-center justify-between gap-2 rounded-md bg-success/15 px-2 py-1.5">
+                <span className="pixel text-[9px] text-success">✓ {promo.code} · {promo.label}</span>
+                <button onClick={removePromo} className="pixel text-[9px] text-destructive">✕</button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  value={promoInput}
+                  onChange={(e) => setPromoInput(e.target.value)}
+                  placeholder="PROMO CODE"
+                  className="pixel-border-sm flex-1 rounded-md bg-input px-2 py-1.5 text-base uppercase outline-none focus:ring-2 focus:ring-ring"
+                />
+                <button
+                  onClick={applyPromo}
+                  className="pixel-border-sm rounded-md bg-accent px-3 pixel text-[10px] text-accent-foreground"
+                >
+                  APPLY
+                </button>
+              </div>
+            )}
           </div>
+
+          <div className="mt-3 space-y-1 border-t-2 border-dashed border-border pt-3 text-base">
+            <Row k="Subtotal" v={`Rs.${subtotal}`} />
+            {discount > 0 && <Row k="Discount" v={`− Rs.${discount}`} accent="text-success" />}
+            {deliveryFee > 0 && <Row k="Delivery" v={`Rs.${deliveryFee}`} />}
+            <Row k="Tax (5%)" v={`Rs.${tax}`} />
+          </div>
+
+          <div className="mt-2 flex items-center justify-between border-t-2 border-double border-border pt-2">
+            <span className="pixel text-[10px] text-muted-foreground">TOTAL</span>
+            <span className="pixel text-base text-coin">Rs.{total}</span>
+          </div>
+
+          <p className="mt-2 text-center text-sm text-muted-foreground">
+            {orderType === "delivery" ? "🛵 Delivery in ~35–45 min" : "🏃 Ready in ~15–20 min"}
+          </p>
 
           <button
             onClick={onCheckout}
@@ -372,6 +586,15 @@ function MenuScreen({
         </div>
       </aside>
     </section>
+  );
+}
+
+function Row({ k, v, accent }: { k: string; v: string; accent?: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-muted-foreground">{k}</span>
+      <span className={accent ?? ""}>{v}</span>
+    </div>
   );
 }
 
@@ -398,7 +621,6 @@ function DishCard({
           width={600}
           height={600}
           className="h-full w-full object-cover transition group-hover:scale-105"
-          style={{ imageRendering: "auto" }}
         />
         <div
           className="pointer-events-none absolute inset-0"
@@ -412,14 +634,19 @@ function DishCard({
             ×{qty}
           </span>
         )}
+        {item.tags && item.tags.length > 0 && (
+          <div className="absolute bottom-2 left-2 flex flex-wrap gap-1">
+            {item.tags.map((t) => <TagPill key={t} t={t} />)}
+          </div>
+        )}
       </div>
-
 
       <div className="p-3">
         <div className="flex items-center justify-between gap-2">
           <h4 className="pixel text-[11px] leading-tight text-foreground">{item.name}</h4>
           <span className="pixel text-[10px] text-coin">Rs.{item.price}</span>
         </div>
+        {item.desc && <p className="mt-1 text-sm leading-tight text-muted-foreground">{item.desc}</p>}
 
         <div className="mt-3 flex items-center gap-2">
           <button
@@ -460,26 +687,43 @@ function DishCard({
 function BillScreen({
   customer,
   cart,
+  subtotal,
+  discount,
+  deliveryFee,
+  tax,
   total,
+  promo,
   onBack,
   onNewGame,
 }: {
   customer: Customer;
   cart: number[];
+  subtotal: number;
+  discount: number;
+  deliveryFee: number;
+  tax: number;
   total: number;
+  promo: { code: string; off: number; label: string } | null;
   onBack: () => void;
   onNewGame: () => void;
 }) {
   const now = new Date();
   const orderNo = useMemo(() => Math.floor(100000 + Math.random() * 900000), []);
-  const subtotal = total;
-  const tax = Math.round(subtotal * 0.05);
-  const grand = subtotal + tax;
+  const eta = useMemo(() => {
+    const mins = customer.orderType === "delivery" ? 40 : 18;
+    const t = new Date(now.getTime() + mins * 60000);
+    return t.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <section className="mx-auto max-w-md animate-pop">
-      <div className="mb-4 text-center">
+      <div className="mb-4 text-center print:hidden">
         <div className="text-5xl animate-float">🧾</div>
         <h2 className="text-stroke pixel mt-2 text-lg text-coin">ORDER CONFIRMED</h2>
+        <p className="mt-1 text-base text-muted-foreground">
+          {customer.orderType === "delivery" ? "🛵 Arriving" : "🏃 Ready"} ~{eta}
+        </p>
       </div>
 
       <div
@@ -504,8 +748,12 @@ function BillScreen({
             <span>{now.toLocaleDateString()}</span>
           </div>
           <div className="flex justify-between text-base">
-            <span>Cashier: AUTO</span>
+            <span>Type: {customer.orderType === "delivery" ? "DELIVERY" : "PICKUP"}</span>
             <span>{now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+          </div>
+          <div className="flex justify-between text-base">
+            <span>Pay: {customer.payment === "cod" ? "CASH" : "CARD"}</span>
+            <span>ETA: {eta}</span>
           </div>
 
           <div className="my-2 border-t border-dashed border-neutral-500" />
@@ -513,7 +761,8 @@ function BillScreen({
           <div className="text-base space-y-0.5">
             <ReceiptRow k="Name" v={customer.name} />
             <ReceiptRow k="Phone" v={customer.phone} />
-            <ReceiptRow k="Addr" v={customer.address} />
+            {customer.orderType === "delivery" && <ReceiptRow k="Addr" v={customer.address} />}
+            {customer.notes && <ReceiptRow k="Note" v={customer.notes} />}
           </div>
 
           <div className="my-2 border-t border-dashed border-neutral-500" />
@@ -547,6 +796,12 @@ function BillScreen({
 
           <div className="text-base space-y-0.5">
             <div className="flex justify-between"><span>Subtotal</span><span>Rs.{subtotal}</span></div>
+            {promo && (
+              <div className="flex justify-between"><span>Promo ({promo.code})</span><span>− Rs.{discount}</span></div>
+            )}
+            {deliveryFee > 0 && (
+              <div className="flex justify-between"><span>Delivery</span><span>Rs.{deliveryFee}</span></div>
+            )}
             <div className="flex justify-between"><span>Tax (5%)</span><span>Rs.{tax}</span></div>
           </div>
 
@@ -554,11 +809,11 @@ function BillScreen({
 
           <div className="flex justify-between text-2xl font-bold">
             <span>TOTAL</span>
-            <span>Rs.{grand}</span>
+            <span>Rs.{total}</span>
           </div>
 
           <div className="mt-4 text-center text-base">
-            <p>** PAID — THANK YOU **</p>
+            <p>** {customer.payment === "cod" ? "DUE ON DELIVERY" : "PAID — THANK YOU"} **</p>
             <p className="opacity-70">Visit us again ♥</p>
           </div>
 
@@ -574,12 +829,18 @@ function BillScreen({
         </div>
       </div>
 
-      <div className="mt-6 flex gap-3">
+      <div className="mt-6 flex flex-wrap gap-3 print:hidden">
         <button
           onClick={onBack}
           className="pixel-border-sm flex-1 rounded-md bg-muted px-4 py-3 pixel text-[10px]"
         >
           ◀ EDIT ORDER
+        </button>
+        <button
+          onClick={() => window.print()}
+          className="pixel-border-sm flex-1 rounded-md bg-accent px-4 py-3 pixel text-[10px] text-accent-foreground"
+        >
+          🖨 PRINT
         </button>
         <button
           onClick={onNewGame}
@@ -647,6 +908,11 @@ function KarahiCard({
             ×{totalQty}
           </span>
         )}
+        {half.tags && (
+          <div className="absolute bottom-2 left-2 flex flex-wrap gap-1">
+            {half.tags.map((t) => <TagPill key={t} t={t} />)}
+          </div>
+        )}
       </div>
 
       <div className="p-3">
@@ -654,6 +920,7 @@ function KarahiCard({
           <h4 className="pixel text-[11px] leading-tight text-foreground">Beef Karahi</h4>
           <span className="pixel text-[10px] text-coin">Rs.{active.price}</span>
         </div>
+        {half.desc && <p className="mt-1 text-sm leading-tight text-muted-foreground">{half.desc}</p>}
 
         <div className="mt-2 grid grid-cols-2 gap-1">
           {(["Half", "Full"] as const).map((s) => {
