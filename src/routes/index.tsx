@@ -509,19 +509,19 @@ function MenuScreen({
       </div>
 
       <aside className="lg:sticky lg:top-24 lg:self-start">
-        <div className="pixel-border rounded-lg bg-card p-4">
-          <h3 className="pixel text-base text-primary">Your Order</h3>
+        <div className="pixel-border rounded-2xl bg-card p-5">
+          <h3 className="pixel text-lg text-primary font-semibold">Your Order</h3>
           <div className="mt-3 space-y-2 text-base">
             {cart.every((q) => q === 0) ? (
-              <p className="text-muted-foreground italic">No dishes selected yet.</p>
+              <p className="text-muted-foreground italic text-sm">No dishes selected yet.</p>
             ) : (
               cart.map((q, i) =>
                 q > 0 ? (
                   <div key={i} className="flex items-center justify-between gap-2">
-                    <span className="truncate">
+                    <span className="truncate text-sm">
                       {ITEMS[i].emoji} {labelOf(ITEMS[i])} ×{q}
                     </span>
-                    <span className="pixel text-[11px] text-coin">
+                    <span className="pixel text-xs text-coin font-semibold">
                       Rs.{q * ITEMS[i].price}
                     </span>
                   </div>
@@ -531,8 +531,8 @@ function MenuScreen({
           </div>
 
           {/* Payment method */}
-          <div className="mt-4 border-t border-border/60 pt-3">
-            <span className="mb-2 block pixel text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Payment Method</span>
+          <div className="mt-4 border-t border-border/40 pt-3">
+            <span className="mb-2 block pixel text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Payment Method</span>
             <div className="grid grid-cols-2 gap-2">
               {(["cod", "card"] as const).map((m) => {
                 const active = payment === m;
@@ -542,8 +542,8 @@ function MenuScreen({
                   <button
                     key={m}
                     onClick={() => setPayment(m)}
-                    className={`pixel-border-sm rounded-md px-2 py-2 pixel text-[10px] transition ${
-                      active ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"
+                    className={`rounded-xl px-2 py-2.5 pixel text-[10px] font-semibold transition shadow-sm ${
+                      active ? "bg-primary text-primary-foreground shadow-glow" : "bg-muted hover:bg-muted/80"
                     }`}
                     style={active ? { backgroundImage: "var(--gradient-primary)" } : undefined}
                   >
@@ -555,11 +555,11 @@ function MenuScreen({
           </div>
 
           {/* Promo */}
-          <div className="mt-3 border-t border-border/60 pt-3">
+          <div className="mt-3 border-t border-border/40 pt-3">
             {promo ? (
-              <div className="flex items-center justify-between gap-2 rounded-md bg-success/15 px-2 py-1.5">
-                <span className="pixel text-[9px] text-success">✓ {promo.code} · {promo.label}</span>
-                <button onClick={removePromo} className="pixel text-[9px] text-destructive">✕</button>
+              <div className="flex items-center justify-between gap-2 rounded-xl bg-success/10 px-3 py-2">
+                <span className="pixel text-[10px] text-success font-semibold">✓ {promo.code} · {promo.label}</span>
+                <button onClick={removePromo} className="pixel text-[10px] text-destructive font-semibold">✕</button>
               </div>
             ) : (
               <div className="flex gap-2">
@@ -567,11 +567,11 @@ function MenuScreen({
                   value={promoInput}
                   onChange={(e) => setPromoInput(e.target.value)}
                   placeholder="Promo code"
-                  className="pixel-border-sm flex-1 rounded-md bg-input px-2 py-1.5 text-base uppercase outline-none focus:ring-2 focus:ring-ring"
+                  className="soft-shadow flex-1 rounded-xl bg-input px-3 py-2 text-base uppercase outline-none focus:ring-2 focus:ring-ring border border-border/50"
                 />
                 <button
                   onClick={applyPromo}
-                  className="pixel-border-sm rounded-md bg-accent px-3 pixel text-[10px] text-accent-foreground"
+                  className="rounded-xl bg-accent px-4 pixel text-[10px] text-accent-foreground font-semibold shadow-sm hover:bg-accent/90 transition"
                 >
                   APPLY
                 </button>
@@ -579,16 +579,16 @@ function MenuScreen({
             )}
           </div>
 
-          <div className="mt-3 space-y-1 border-t border-border/60 pt-3 text-base">
+          <div className="mt-3 space-y-1 border-t border-border/40 pt-3 text-sm">
             <Row k="Subtotal" v={`Rs.${subtotal}`} />
-            {discount > 0 && <Row k="Discount" v={`− Rs.${discount}`} accent="text-success" />}
+            {discount > 0 && <Row k="Discount" v={`− Rs.${discount}`} accent="text-success font-semibold" />}
             {deliveryFee > 0 && <Row k="Delivery" v={`Rs.${deliveryFee}`} />}
             <Row k={`Tax (${Math.round(taxRate * 100)}%)`} v={`Rs.${tax}`} />
           </div>
 
-          <div className="mt-2 flex items-center justify-between border-t-2 border-double border-border pt-2">
-            <span className="pixel text-[10px] text-muted-foreground">TOTAL</span>
-            <span className="pixel text-base text-coin">Rs.{total}</span>
+          <div className="mt-2 flex items-center justify-between border-t-2 border-dashed border-border pt-2">
+            <span className="pixel text-[11px] text-muted-foreground font-semibold">TOTAL</span>
+            <span className="pixel text-lg text-coin font-bold">Rs.{total}</span>
           </div>
 
           <p className="mt-2 text-center text-sm text-muted-foreground">
@@ -597,7 +597,7 @@ function MenuScreen({
 
           <button
             onClick={onCheckout}
-            className="pixel-border mt-4 w-full rounded-md bg-success px-4 py-3 pixel text-xs text-success-foreground transition active:translate-y-0.5"
+            className="mt-4 w-full rounded-xl bg-success px-4 py-3.5 pixel text-sm text-success-foreground transition active:translate-y-0.5 font-semibold shadow-lg hover:shadow-xl"
           >
             ▶ CHECKOUT
           </button>
