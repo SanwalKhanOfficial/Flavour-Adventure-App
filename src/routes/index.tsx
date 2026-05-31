@@ -410,6 +410,7 @@ function MenuScreen({
   discount,
   deliveryFee,
   tax,
+  taxRate,
   total,
   promo,
   promoInput,
@@ -417,6 +418,8 @@ function MenuScreen({
   applyPromo,
   removePromo,
   orderType,
+  payment,
+  setPayment,
   onAdd,
   onRemove,
   onClear,
@@ -427,6 +430,7 @@ function MenuScreen({
   discount: number;
   deliveryFee: number;
   tax: number;
+  taxRate: number;
   total: number;
   promo: { code: string; off: number; label: string } | null;
   promoInput: string;
@@ -434,6 +438,8 @@ function MenuScreen({
   applyPromo: () => void;
   removePromo: () => void;
   orderType: OrderType;
+  payment: PayMethod;
+  setPayment: (p: PayMethod) => void;
   onAdd: (i: number) => void;
   onRemove: (i: number) => void;
   onClear: (i: number) => void;
