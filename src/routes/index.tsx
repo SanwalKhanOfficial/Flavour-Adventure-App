@@ -185,7 +185,7 @@ function Game() {
 
       {toast && (
         <div className="pointer-events-none fixed inset-x-0 top-24 z-50 flex justify-center">
-          <div className="animate-pop pixel-border rounded-md bg-card px-4 py-2 pixel text-xs text-accent">
+          <div className="animate-pop rounded-2xl bg-card px-5 py-3 pixel text-sm text-accent shadow-lg border border-accent/20">
             {toast}
           </div>
         </div>
@@ -205,7 +205,7 @@ function Header({
   setStage: (s: Stage) => void;
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b-4 border-black bg-card/80 backdrop-blur print:hidden">
+    <header className="sticky top-0 z-40 border-b border-primary/15 bg-card/80 backdrop-blur print:hidden">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <button
           onClick={() => setStage("intro")}
@@ -219,10 +219,10 @@ function Header({
         </button>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <Badge label={`x${itemCount}`} icon="🛒" tone="secondary" />
-          <div className="pixel-border-sm flex items-center gap-2 rounded-md bg-background px-3 py-1.5">
+          <Badge label={`x${itemCount}`} icon="🛒" tone="accent" />
+          <div className="pixel-border-sm flex items-center gap-2 rounded-full bg-background px-4 py-1.5">
             <span className="animate-coin text-lg">🪙</span>
-            <span className="pixel text-xs text-coin">Rs.{total}</span>
+            <span className="pixel text-sm font-semibold text-coin">Rs.{total}</span>
           </div>
         </div>
       </div>
@@ -230,10 +230,10 @@ function Header({
   );
 }
 
-function Badge({ label, icon, tone }: { label: string; icon?: string; tone: "accent" | "secondary" }) {
-  const bg = tone === "accent" ? "bg-accent text-accent-foreground" : "bg-secondary text-secondary-foreground";
+function Badge({ label, icon, tone }: { label: string; icon?: string; tone: "accent" | "primary" }) {
+  const bg = tone === "accent" ? "bg-accent text-accent-foreground" : "bg-primary text-primary-foreground";
   return (
-    <div className={`pixel-border-sm hidden sm:flex items-center gap-1 rounded-md ${bg} px-2 py-1 pixel text-[10px]`}>
+    <div className={`pixel-border-sm hidden sm:flex items-center gap-1.5 rounded-full ${bg} px-3 py-1.5 pixel text-[11px] font-semibold`}>
       {icon && <span className="text-sm">{icon}</span>}
       {label}
     </div>
@@ -245,11 +245,11 @@ function TagPill({ t }: { t: Tag }) {
     "Chef's Pick": "bg-primary text-primary-foreground",
     "Spicy": "bg-destructive text-destructive-foreground",
     "New": "bg-accent text-accent-foreground",
-    "Bestseller": "bg-coin text-primary-foreground",
+    "Bestseller": "bg-coin text-white",
     "Veg": "bg-success text-success-foreground",
   };
   return (
-    <span className={`pixel-border-sm rounded px-1.5 py-0.5 pixel text-[8px] ${styles[t]}`}>
+    <span className={`rounded-full px-2.5 py-1 pixel text-[9px] font-semibold shadow-sm ${styles[t]}`}>
       {t.toUpperCase()}
     </span>
   );
@@ -279,21 +279,23 @@ function IntroScreen({
 
   return (
     <section className="mx-auto max-w-2xl animate-pop">
-      <div className="mb-6 text-center">
-        <div className="mb-3 text-6xl animate-float">👨‍🍳</div>
-        <p className="pixel text-[10px] uppercase tracking-[0.45em] text-primary/80">Fine Dining · Delivered</p>
-        <h2 className="pixel mt-2 text-3xl text-primary sm:text-5xl">
+      <div className="mb-8 text-center">
+        <div className="mb-4 inline-block rounded-full bg-primary/10 p-5 animate-float">
+          <div className="text-5xl">👨‍🍳</div>
+        </div>
+        <p className="pixel text-xs uppercase tracking-[0.35em] text-primary/80 font-semibold">Fine Dining · Delivered</p>
+        <h2 className="pixel mt-3 text-4xl text-primary sm:text-5xl">
           Crave Crafter
         </h2>
-        <p className="mt-3 text-lg italic text-muted-foreground">
+        <p className="mt-3 text-lg text-muted-foreground">
           Khao Peo Zindigi Jeo — share a few details to begin your reservation.
         </p>
       </div>
 
-      <div className="pixel-border rounded-lg bg-card p-6">
+      <div className="pixel-border rounded-2xl bg-card p-6">
         {/* Order type */}
         <div className="mb-4">
-          <span className="mb-1.5 block pixel text-[10px] text-accent">ORDER TYPE</span>
+          <span className="mb-2 block pixel text-[11px] uppercase tracking-wider text-accent font-semibold">Order Type</span>
           <div className="grid grid-cols-2 gap-2">
             {(["delivery", "pickup"] as const).map((t) => {
               const active = customer.orderType === t;
@@ -301,8 +303,8 @@ function IntroScreen({
                 <button
                   key={t}
                   onClick={() => setCustomer({ ...customer, orderType: t })}
-                  className={`pixel-border-sm rounded-md px-3 py-2 pixel text-[10px] transition ${
-                    active ? "bg-accent text-accent-foreground" : "bg-background"
+                  className={`rounded-xl px-3 py-2.5 pixel text-[11px] font-semibold transition shadow-sm ${
+                    active ? "bg-primary text-primary-foreground shadow-glow" : "bg-muted hover:bg-muted/80"
                   }`}
                 >
                   {t === "delivery" ? "🛵 DELIVERY" : "🏃 PICKUP"}
@@ -344,19 +346,19 @@ function IntroScreen({
 
 
         {err && (
-          <p className="mb-3 pixel text-[10px] text-destructive">⚠ {err}</p>
+          <p className="mb-3 pixel text-xs text-destructive font-semibold">⚠ {err}</p>
         )}
 
         <button
           onClick={submit}
-          className="primary-glow pixel-border w-full rounded-md bg-primary px-6 py-4 pixel text-sm text-primary-foreground transition active:translate-y-0.5"
+          className="primary-glow w-full rounded-xl bg-primary px-6 py-4 pixel text-sm text-primary-foreground transition active:translate-y-0.5 font-semibold shadow-lg"
           style={{ backgroundImage: "var(--gradient-primary)" }}
         >
           ▶ START YOUR ORDER
         </button>
 
-        <p className="mt-3 text-center text-sm text-muted-foreground">
-          🎁 Try promo <span className="pixel text-[10px] text-coin">HUNGRY10</span> at checkout
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+          🎁 Try promo <span className="pixel text-xs text-coin font-semibold">HUNGRY10</span> at checkout
         </p>
       </div>
     </section>
@@ -380,14 +382,14 @@ function Field({
 }) {
   return (
     <label className="mb-4 block">
-      <span className="mb-1.5 block pixel text-[10px] text-accent">{label}</span>
+      <span className="mb-1.5 block pixel text-[11px] uppercase tracking-wider text-accent font-semibold">{label}</span>
       {textarea ? (
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={2}
-          className="pixel-border-sm w-full rounded-md bg-input px-3 py-2 text-lg text-foreground outline-none focus:ring-2 focus:ring-ring"
+          className="soft-shadow w-full rounded-xl bg-input px-4 py-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring border border-border/50 transition"
         />
       ) : (
         <input
@@ -395,7 +397,7 @@ function Field({
           inputMode={inputMode}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="pixel-border-sm w-full rounded-md bg-input px-3 py-2 text-lg text-foreground outline-none focus:ring-2 focus:ring-ring"
+          className="soft-shadow w-full rounded-xl bg-input px-4 py-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring border border-border/50 transition"
         />
       )}
     </label>
@@ -454,18 +456,18 @@ function MenuScreen({
   return (
     <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div>
-        <div className="mb-4 flex items-end justify-between">
-          <h2 className="pixel text-stroke text-lg text-accent sm:text-xl">SELECT DISH</h2>
-          <span className="pixel text-[10px] text-muted-foreground">CHOOSE WISELY</span>
+        <div className="mb-5 flex items-end justify-between">
+          <h2 className="pixel text-stroke text-xl text-accent sm:text-2xl font-semibold">Select Dish</h2>
+          <span className="pixel text-xs text-muted-foreground uppercase tracking-wider">Choose Wisely</span>
         </div>
 
-        <div className="mb-4 flex flex-wrap gap-2">
+        <div className="mb-5 flex flex-wrap gap-2">
           {filters.map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`pixel-border-sm rounded-md px-2.5 py-1 pixel text-[9px] transition ${
-                filter === f ? "bg-primary text-primary-foreground" : "bg-card"
+              className={`rounded-full px-4 py-2 pixel text-[10px] font-semibold transition shadow-sm ${
+                filter === f ? "bg-primary text-primary-foreground shadow-glow" : "bg-card border border-border/50 hover:bg-muted"
               }`}
             >
               {f.toUpperCase()}
@@ -507,19 +509,19 @@ function MenuScreen({
       </div>
 
       <aside className="lg:sticky lg:top-24 lg:self-start">
-        <div className="pixel-border rounded-lg bg-card p-4">
-          <h3 className="pixel text-base text-primary">Your Order</h3>
+        <div className="pixel-border rounded-2xl bg-card p-5">
+          <h3 className="pixel text-lg text-primary font-semibold">Your Order</h3>
           <div className="mt-3 space-y-2 text-base">
             {cart.every((q) => q === 0) ? (
-              <p className="text-muted-foreground italic">No dishes selected yet.</p>
+              <p className="text-muted-foreground italic text-sm">No dishes selected yet.</p>
             ) : (
               cart.map((q, i) =>
                 q > 0 ? (
                   <div key={i} className="flex items-center justify-between gap-2">
-                    <span className="truncate">
+                    <span className="truncate text-sm">
                       {ITEMS[i].emoji} {labelOf(ITEMS[i])} ×{q}
                     </span>
-                    <span className="pixel text-[11px] text-coin">
+                    <span className="pixel text-xs text-coin font-semibold">
                       Rs.{q * ITEMS[i].price}
                     </span>
                   </div>
@@ -529,8 +531,8 @@ function MenuScreen({
           </div>
 
           {/* Payment method */}
-          <div className="mt-4 border-t border-border/60 pt-3">
-            <span className="mb-2 block pixel text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Payment Method</span>
+          <div className="mt-4 border-t border-border/40 pt-3">
+            <span className="mb-2 block pixel text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">Payment Method</span>
             <div className="grid grid-cols-2 gap-2">
               {(["cod", "card"] as const).map((m) => {
                 const active = payment === m;
@@ -540,8 +542,8 @@ function MenuScreen({
                   <button
                     key={m}
                     onClick={() => setPayment(m)}
-                    className={`pixel-border-sm rounded-md px-2 py-2 pixel text-[10px] transition ${
-                      active ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"
+                    className={`rounded-xl px-2 py-2.5 pixel text-[10px] font-semibold transition shadow-sm ${
+                      active ? "bg-primary text-primary-foreground shadow-glow" : "bg-muted hover:bg-muted/80"
                     }`}
                     style={active ? { backgroundImage: "var(--gradient-primary)" } : undefined}
                   >
@@ -553,11 +555,11 @@ function MenuScreen({
           </div>
 
           {/* Promo */}
-          <div className="mt-3 border-t border-border/60 pt-3">
+          <div className="mt-3 border-t border-border/40 pt-3">
             {promo ? (
-              <div className="flex items-center justify-between gap-2 rounded-md bg-success/15 px-2 py-1.5">
-                <span className="pixel text-[9px] text-success">✓ {promo.code} · {promo.label}</span>
-                <button onClick={removePromo} className="pixel text-[9px] text-destructive">✕</button>
+              <div className="flex items-center justify-between gap-2 rounded-xl bg-success/10 px-3 py-2">
+                <span className="pixel text-[10px] text-success font-semibold">✓ {promo.code} · {promo.label}</span>
+                <button onClick={removePromo} className="pixel text-[10px] text-destructive font-semibold">✕</button>
               </div>
             ) : (
               <div className="flex gap-2">
@@ -565,11 +567,11 @@ function MenuScreen({
                   value={promoInput}
                   onChange={(e) => setPromoInput(e.target.value)}
                   placeholder="Promo code"
-                  className="pixel-border-sm flex-1 rounded-md bg-input px-2 py-1.5 text-base uppercase outline-none focus:ring-2 focus:ring-ring"
+                  className="soft-shadow flex-1 rounded-xl bg-input px-3 py-2 text-base uppercase outline-none focus:ring-2 focus:ring-ring border border-border/50"
                 />
                 <button
                   onClick={applyPromo}
-                  className="pixel-border-sm rounded-md bg-accent px-3 pixel text-[10px] text-accent-foreground"
+                  className="rounded-xl bg-accent px-4 pixel text-[10px] text-accent-foreground font-semibold shadow-sm hover:bg-accent/90 transition"
                 >
                   APPLY
                 </button>
@@ -577,16 +579,16 @@ function MenuScreen({
             )}
           </div>
 
-          <div className="mt-3 space-y-1 border-t border-border/60 pt-3 text-base">
+          <div className="mt-3 space-y-1 border-t border-border/40 pt-3 text-sm">
             <Row k="Subtotal" v={`Rs.${subtotal}`} />
-            {discount > 0 && <Row k="Discount" v={`− Rs.${discount}`} accent="text-success" />}
+            {discount > 0 && <Row k="Discount" v={`− Rs.${discount}`} accent="text-success font-semibold" />}
             {deliveryFee > 0 && <Row k="Delivery" v={`Rs.${deliveryFee}`} />}
             <Row k={`Tax (${Math.round(taxRate * 100)}%)`} v={`Rs.${tax}`} />
           </div>
 
-          <div className="mt-2 flex items-center justify-between border-t-2 border-double border-border pt-2">
-            <span className="pixel text-[10px] text-muted-foreground">TOTAL</span>
-            <span className="pixel text-base text-coin">Rs.{total}</span>
+          <div className="mt-2 flex items-center justify-between border-t-2 border-dashed border-border pt-2">
+            <span className="pixel text-[11px] text-muted-foreground font-semibold">TOTAL</span>
+            <span className="pixel text-lg text-coin font-bold">Rs.{total}</span>
           </div>
 
           <p className="mt-2 text-center text-sm text-muted-foreground">
@@ -595,7 +597,7 @@ function MenuScreen({
 
           <button
             onClick={onCheckout}
-            className="pixel-border mt-4 w-full rounded-md bg-success px-4 py-3 pixel text-xs text-success-foreground transition active:translate-y-0.5"
+            className="mt-4 w-full rounded-xl bg-success px-4 py-3.5 pixel text-sm text-success-foreground transition active:translate-y-0.5 font-semibold shadow-lg hover:shadow-xl"
           >
             ▶ CHECKOUT
           </button>
@@ -628,57 +630,57 @@ function DishCard({
   onClear: () => void;
 }) {
   return (
-    <div className="pixel-border group relative overflow-hidden rounded-lg bg-card transition hover:-translate-y-1">
-      <div className="relative h-40 overflow-hidden">
+    <div className="pixel-border group relative overflow-hidden rounded-2xl bg-card transition hover:-translate-y-1 hover:shadow-glow">
+      <div className="relative h-44 overflow-hidden">
         <img
           src={item.image}
           alt={item.name}
           loading="lazy"
           width={600}
           height={600}
-          className="h-full w-full object-cover transition group-hover:scale-105"
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
         />
         <div
           className="pointer-events-none absolute inset-0"
-          style={{ background: `linear-gradient(180deg, transparent 55%, color-mix(in oklab, ${item.color} 40%, transparent))` }}
+          style={{ background: `linear-gradient(180deg, transparent 45%, color-mix(in oklab, ${item.color} 25%, transparent))` }}
         />
-        <span className="pixel-border-sm absolute left-2 top-2 rounded-md bg-background/80 px-2 py-1 text-lg backdrop-blur">
+        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-lg shadow-sm backdrop-blur">
           {item.emoji}
         </span>
         {qty > 0 && (
-          <span className="pixel-border-sm absolute right-2 top-2 rounded-md bg-secondary px-2 py-1 pixel text-[10px] text-secondary-foreground">
+          <span className="absolute right-3 top-3 rounded-full bg-secondary px-3 py-1 pixel text-[10px] text-secondary-foreground font-semibold shadow-sm">
             ×{qty}
           </span>
         )}
         {item.tags && item.tags.length > 0 && (
-          <div className="absolute bottom-2 left-2 flex flex-wrap gap-1">
+          <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5">
             {item.tags.map((t) => <TagPill key={t} t={t} />)}
           </div>
         )}
       </div>
 
-      <div className="p-3">
+      <div className="p-4">
         <div className="flex items-center justify-between gap-2">
-          <h4 className="pixel text-[11px] leading-tight text-foreground">{item.name}</h4>
-          <span className="pixel text-[10px] text-coin">Rs.{item.price}</span>
+          <h4 className="pixel text-sm leading-tight text-foreground font-semibold">{item.name}</h4>
+          <span className="pixel text-sm text-coin font-bold">Rs.{item.price}</span>
         </div>
-        {item.desc && <p className="mt-1 text-sm leading-tight text-muted-foreground">{item.desc}</p>}
+        {item.desc && <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{item.desc}</p>}
 
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-2">
           <button
             onClick={onRemove}
             disabled={qty === 0}
-            className="pixel-border-sm h-9 w-9 rounded-md bg-muted pixel text-xs disabled:opacity-40"
+            className="h-10 w-10 rounded-xl bg-muted pixel text-base font-bold disabled:opacity-40 shadow-sm hover:bg-muted/80 transition"
             aria-label={`Remove ${item.name}`}
           >
             −
           </button>
-          <div className="pixel-border-sm flex h-9 flex-1 items-center justify-center rounded-md bg-background pixel text-xs">
+          <div className="flex h-10 flex-1 items-center justify-center rounded-xl bg-background pixel text-sm font-semibold shadow-sm border border-border/30">
             {qty}
           </div>
           <button
             onClick={onAdd}
-            className="pixel-border-sm h-9 w-9 rounded-md bg-primary pixel text-xs text-primary-foreground"
+            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md transition"
             style={{ backgroundImage: "var(--gradient-primary)" }}
             aria-label={`Add ${item.name}`}
           >
@@ -687,7 +689,7 @@ function DishCard({
           {qty > 0 && (
             <button
               onClick={onClear}
-              className="pixel-border-sm h-9 rounded-md bg-destructive px-2 pixel text-[10px] text-destructive-foreground"
+              className="h-10 rounded-xl bg-destructive px-3 pixel text-xs text-destructive-foreground font-semibold shadow-sm hover:bg-destructive/90 transition"
             >
               ✕
             </button>
@@ -745,11 +747,11 @@ function BillScreen({
       </div>
 
       <div
-        className="relative bg-[#fdfaf1] text-neutral-800 shadow-2xl"
+        className="relative bg-[#fff9f0] text-neutral-800 shadow-2xl"
         style={{
           fontFamily: "'VT323', ui-monospace, monospace",
           backgroundImage:
-            "repeating-linear-gradient(0deg, rgba(0,0,0,0.04) 0 1px, transparent 1px 4px)",
+            "repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0 1px, transparent 1px 4px)",
           clipPath:
             "polygon(0 0, 100% 0, 100% calc(100% - 12px), 96% 100%, 92% calc(100% - 12px), 88% 100%, 84% calc(100% - 12px), 80% 100%, 76% calc(100% - 12px), 72% 100%, 68% calc(100% - 12px), 64% 100%, 60% calc(100% - 12px), 56% 100%, 52% calc(100% - 12px), 48% 100%, 44% calc(100% - 12px), 40% 100%, 36% calc(100% - 12px), 32% 100%, 28% calc(100% - 12px), 24% 100%, 20% calc(100% - 12px), 16% 100%, 12% calc(100% - 12px), 8% 100%, 4% calc(100% - 12px), 0 100%)",
         }}
@@ -857,19 +859,19 @@ function BillScreen({
       <div className="mt-6 flex flex-wrap gap-3 print:hidden">
         <button
           onClick={onBack}
-          className="pixel-border-sm flex-1 rounded-md bg-muted px-4 py-3 pixel text-[10px]"
+          className="flex-1 rounded-xl bg-muted px-4 py-3.5 pixel text-sm font-semibold shadow-sm hover:bg-muted/80 transition"
         >
           ◀ EDIT ORDER
         </button>
         <button
           onClick={() => window.print()}
-          className="pixel-border-sm flex-1 rounded-md bg-accent px-4 py-3 pixel text-[10px] text-accent-foreground"
+          className="flex-1 rounded-xl bg-accent px-4 py-3.5 pixel text-sm text-accent-foreground font-semibold shadow-sm hover:bg-accent/90 transition"
         >
           🖨 PRINT
         </button>
         <button
           onClick={onNewGame}
-          className="pixel-border flex-1 rounded-md bg-primary px-4 py-3 pixel text-[10px] text-primary-foreground"
+          className="flex-1 rounded-xl bg-primary px-4 py-3.5 pixel text-sm text-primary-foreground font-semibold shadow-lg hover:shadow-xl transition"
           style={{ backgroundImage: "var(--gradient-primary)" }}
         >
           NEW ORDER ▶
@@ -911,43 +913,43 @@ function KarahiCard({
   const totalQty = qtyHalf + qtyFull;
 
   return (
-    <div className="pixel-border group relative overflow-hidden rounded-lg bg-card transition hover:-translate-y-1">
-      <div className="relative h-40 overflow-hidden">
+    <div className="pixel-border group relative overflow-hidden rounded-2xl bg-card transition hover:-translate-y-1 hover:shadow-glow">
+      <div className="relative h-44 overflow-hidden">
         <img
           src={half.image}
           alt="Beef Karahi"
           loading="lazy"
           width={600}
           height={600}
-          className="h-full w-full object-cover transition group-hover:scale-105"
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
         />
         <div
           className="pointer-events-none absolute inset-0"
-          style={{ background: `linear-gradient(180deg, transparent 55%, color-mix(in oklab, ${half.color} 40%, transparent))` }}
+          style={{ background: `linear-gradient(180deg, transparent 45%, color-mix(in oklab, ${half.color} 25%, transparent))` }}
         />
-        <span className="pixel-border-sm absolute left-2 top-2 rounded-md bg-background/80 px-2 py-1 text-lg backdrop-blur">
+        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-lg shadow-sm backdrop-blur">
           🍛
         </span>
         {totalQty > 0 && (
-          <span className="pixel-border-sm absolute right-2 top-2 rounded-md bg-secondary px-2 py-1 pixel text-[10px] text-secondary-foreground">
+          <span className="absolute right-3 top-3 rounded-full bg-secondary px-3 py-1 pixel text-[10px] text-secondary-foreground font-semibold shadow-sm">
             ×{totalQty}
           </span>
         )}
         {half.tags && (
-          <div className="absolute bottom-2 left-2 flex flex-wrap gap-1">
+          <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5">
             {half.tags.map((t) => <TagPill key={t} t={t} />)}
           </div>
         )}
       </div>
 
-      <div className="p-3">
+      <div className="p-4">
         <div className="flex items-center justify-between gap-2">
-          <h4 className="pixel text-[11px] leading-tight text-foreground">Beef Karahi</h4>
-          <span className="pixel text-[10px] text-coin">Rs.{active.price}</span>
+          <h4 className="pixel text-sm leading-tight text-foreground font-semibold">Beef Karahi</h4>
+          <span className="pixel text-sm text-coin font-bold">Rs.{active.price}</span>
         </div>
-        {half.desc && <p className="mt-1 text-sm leading-tight text-muted-foreground">{half.desc}</p>}
+        {half.desc && <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{half.desc}</p>}
 
-        <div className="mt-2 grid grid-cols-2 gap-1">
+        <div className="mt-3 grid grid-cols-2 gap-2">
           {(["Half", "Full"] as const).map((s) => {
             const it = s === "Half" ? half : full;
             const q = s === "Half" ? qtyHalf : qtyFull;
@@ -956,8 +958,8 @@ function KarahiCard({
               <button
                 key={s}
                 onClick={() => setSize(s)}
-                className={`pixel-border-sm rounded-md px-2 py-1.5 pixel text-[9px] transition ${
-                  isActive ? "bg-accent text-accent-foreground" : "bg-background"
+                className={`rounded-xl px-2 py-2 pixel text-[10px] font-semibold transition shadow-sm ${
+                  isActive ? "bg-primary text-primary-foreground shadow-glow" : "bg-muted hover:bg-muted/80"
                 }`}
               >
                 {s.toUpperCase()} · Rs.{it.price}
@@ -967,20 +969,20 @@ function KarahiCard({
           })}
         </div>
 
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-2">
           <button
             onClick={() => onRemove(size)}
             disabled={qty === 0}
-            className="pixel-border-sm h-9 w-9 rounded-md bg-muted pixel text-xs disabled:opacity-40"
+            className="h-10 w-10 rounded-xl bg-muted pixel text-base font-bold disabled:opacity-40 shadow-sm hover:bg-muted/80 transition"
           >
             −
           </button>
-          <div className="pixel-border-sm flex h-9 flex-1 items-center justify-center rounded-md bg-background pixel text-[10px]">
+          <div className="flex h-10 flex-1 items-center justify-center rounded-xl bg-background pixel text-xs font-semibold shadow-sm border border-border/30">
             {size} ×{qty}
           </div>
           <button
             onClick={() => onAdd(size)}
-            className="pixel-border-sm h-9 w-9 rounded-md bg-primary pixel text-xs text-primary-foreground"
+            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md transition"
             style={{ backgroundImage: "var(--gradient-primary)" }}
           >
             +
@@ -988,7 +990,7 @@ function KarahiCard({
           {totalQty > 0 && (
             <button
               onClick={onClearAll}
-              className="pixel-border-sm h-9 rounded-md bg-destructive px-2 pixel text-[10px] text-destructive-foreground"
+              className="h-10 rounded-xl bg-destructive px-3 pixel text-xs text-destructive-foreground font-semibold shadow-sm hover:bg-destructive/90 transition"
             >
               ✕
             </button>
