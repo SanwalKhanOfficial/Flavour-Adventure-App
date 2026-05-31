@@ -60,7 +60,7 @@ const KARAHI_FULL = 4;
 const PROMOS: Record<string, { off: number; label: string }> = {
   HUNGRY10: { off: 0.10, label: "10% off" },
   FIRST20: { off: 0.20, label: "20% off · first order" },
-  RINCON15: { off: 0.15, label: "15% off · loyalty" },
+  CRAVE15: { off: 0.15, label: "15% off · loyalty" },
 };
 
 type Stage = "intro" | "menu" | "bill";
