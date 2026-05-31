@@ -205,7 +205,7 @@ function Header({
   setStage: (s: Stage) => void;
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b-4 border-black bg-card/80 backdrop-blur print:hidden">
+    <header className="sticky top-0 z-40 border-b border-primary/15 bg-card/80 backdrop-blur print:hidden">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <button
           onClick={() => setStage("intro")}
@@ -219,10 +219,10 @@ function Header({
         </button>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <Badge label={`x${itemCount}`} icon="🛒" tone="secondary" />
-          <div className="pixel-border-sm flex items-center gap-2 rounded-md bg-background px-3 py-1.5">
+          <Badge label={`x${itemCount}`} icon="🛒" tone="accent" />
+          <div className="pixel-border-sm flex items-center gap-2 rounded-full bg-background px-4 py-1.5">
             <span className="animate-coin text-lg">🪙</span>
-            <span className="pixel text-xs text-coin">Rs.{total}</span>
+            <span className="pixel text-sm font-semibold text-coin">Rs.{total}</span>
           </div>
         </div>
       </div>
@@ -230,10 +230,10 @@ function Header({
   );
 }
 
-function Badge({ label, icon, tone }: { label: string; icon?: string; tone: "accent" | "secondary" }) {
-  const bg = tone === "accent" ? "bg-accent text-accent-foreground" : "bg-secondary text-secondary-foreground";
+function Badge({ label, icon, tone }: { label: string; icon?: string; tone: "accent" | "primary" }) {
+  const bg = tone === "accent" ? "bg-accent text-accent-foreground" : "bg-primary text-primary-foreground";
   return (
-    <div className={`pixel-border-sm hidden sm:flex items-center gap-1 rounded-md ${bg} px-2 py-1 pixel text-[10px]`}>
+    <div className={`pixel-border-sm hidden sm:flex items-center gap-1.5 rounded-full ${bg} px-3 py-1.5 pixel text-[11px] font-semibold`}>
       {icon && <span className="text-sm">{icon}</span>}
       {label}
     </div>
@@ -245,11 +245,11 @@ function TagPill({ t }: { t: Tag }) {
     "Chef's Pick": "bg-primary text-primary-foreground",
     "Spicy": "bg-destructive text-destructive-foreground",
     "New": "bg-accent text-accent-foreground",
-    "Bestseller": "bg-coin text-primary-foreground",
+    "Bestseller": "bg-coin text-white",
     "Veg": "bg-success text-success-foreground",
   };
   return (
-    <span className={`pixel-border-sm rounded px-1.5 py-0.5 pixel text-[8px] ${styles[t]}`}>
+    <span className={`rounded-full px-2.5 py-1 pixel text-[9px] font-semibold shadow-sm ${styles[t]}`}>
       {t.toUpperCase()}
     </span>
   );
