@@ -843,7 +843,14 @@ function BillScreen({
             </div>
             <span className="sr-only">barcode</span>
           </div>
-          <p className="text-center text-sm tracking-[0.3em] mt-1">{orderNo}-ELR</p>
+          <p className="text-center text-sm tracking-[0.3em] mt-1">{orderNo}-CRC</p>
+
+          <div className="mt-4 border-t border-dashed border-neutral-500 pt-3 text-center">
+            <p className="text-xl italic" style={{ fontFamily: "'Playfair Display', serif" }}>
+              "Tussi ja rahe ho? Mat Jao"
+            </p>
+            <p className="mt-1 text-sm opacity-70">— With love, Crave Crafter</p>
+          </div>
         </div>
       </div>
 
