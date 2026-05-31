@@ -820,7 +820,7 @@ function BillScreen({
             {deliveryFee > 0 && (
               <div className="flex justify-between"><span>Delivery</span><span>Rs.{deliveryFee}</span></div>
             )}
-            <div className="flex justify-between"><span>Tax (5%)</span><span>Rs.{tax}</span></div>
+            <div className="flex justify-between"><span>Tax ({Math.round(taxRate * 100)}% · {customer.payment === "cod" ? "Cash" : "Card"})</span><span>Rs.{tax}</span></div>
           </div>
 
           <div className="my-2 border-t border-double border-neutral-700" />
