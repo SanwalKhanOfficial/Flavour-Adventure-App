@@ -209,12 +209,12 @@ function Header({
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <button
           onClick={() => setStage("intro")}
-          className="flex items-center gap-2"
+          className="flex items-center gap-3"
         >
           <span className="text-2xl animate-float">🍽️</span>
-          <div className="text-left leading-none">
-            <h1 className="text-stroke text-sm text-primary sm:text-base">EL RINCÓN</h1>
-            <span className="text-xs text-muted-foreground">Khao Peo Zindigi Jeo</span>
+          <div className="text-left leading-tight">
+            <h1 className="pixel text-base tracking-[0.18em] text-primary sm:text-lg">CRAVE CRAFTER</h1>
+            <span className="text-[11px] uppercase tracking-[0.35em] text-muted-foreground">Khao Peo Zindigi Jeo</span>
           </div>
         </button>
 
