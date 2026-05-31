@@ -281,11 +281,12 @@ function IntroScreen({
     <section className="mx-auto max-w-2xl animate-pop">
       <div className="mb-6 text-center">
         <div className="mb-3 text-6xl animate-float">👨‍🍳</div>
-        <h2 className="text-stroke pixel text-2xl text-primary sm:text-3xl">
-          EL RINCÓN
+        <p className="pixel text-[10px] uppercase tracking-[0.45em] text-primary/80">Fine Dining · Delivered</p>
+        <h2 className="pixel mt-2 text-3xl text-primary sm:text-5xl">
+          Crave Crafter
         </h2>
-        <p className="mt-3 text-xl text-muted-foreground">
-          Khao Peo Zindigi Jeo — enter your details to begin your order.
+        <p className="mt-3 text-lg italic text-muted-foreground">
+          Khao Peo Zindigi Jeo — share a few details to begin your reservation.
         </p>
       </div>
 
