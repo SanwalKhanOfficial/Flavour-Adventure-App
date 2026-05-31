@@ -342,26 +342,6 @@ function IntroScreen({
           textarea
         />
 
-        {/* Payment */}
-        <div className="mb-4">
-          <span className="mb-1.5 block pixel text-[10px] text-accent">PAYMENT METHOD</span>
-          <div className="grid grid-cols-2 gap-2">
-            {(["cod", "card"] as const).map((m) => {
-              const active = customer.payment === m;
-              return (
-                <button
-                  key={m}
-                  onClick={() => setCustomer({ ...customer, payment: m })}
-                  className={`pixel-border-sm rounded-md px-3 py-2 pixel text-[10px] transition ${
-                    active ? "bg-accent text-accent-foreground" : "bg-background"
-                  }`}
-                >
-                  {m === "cod" ? "💵 CASH ON DELIVERY" : "💳 CARD"}
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
         {err && (
           <p className="mb-3 pixel text-[10px] text-destructive">⚠ {err}</p>
