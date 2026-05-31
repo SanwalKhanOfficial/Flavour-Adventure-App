@@ -94,7 +94,8 @@ function Game() {
   const discount = promo ? Math.round(subtotal * promo.off) : 0;
   const deliveryFee = customer.orderType === "delivery" && subtotal > 0 ? 150 : 0;
   const taxable = Math.max(0, subtotal - discount);
-  const tax = Math.round(taxable * 0.05);
+  const taxRate = customer.payment === "cod" ? 0.16 : 0.05;
+  const tax = Math.round(taxable * taxRate);
   const total = taxable + tax + deliveryFee;
 
   const flash = (msg: string) => {
