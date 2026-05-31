@@ -10,15 +10,15 @@ import waffleImg from "@/assets/dishes/waffle.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "El Rincón — Arcade Food Ordering" },
-      { name: "description", content: "An arcade-style restaurant ordering game. Pick your dishes, fill your cart, and clear the bill!" },
-      { property: "og:title", content: "El Rincón — Arcade Food Ordering" },
-      { property: "og:description", content: "Khao Peo Zindigi Jeo — order food, arcade-game style." },
+      { title: "Crave Crafter — Fine Dining, Delivered" },
+      { name: "description", content: "Crave Crafter — a refined five-star restaurant experience. Curated dishes, elegant service, delivered to your door." },
+      { property: "og:title", content: "Crave Crafter — Fine Dining, Delivered" },
+      { property: "og:description", content: "Khao Peo Zindigi Jeo — a refined ordering experience." },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&family=VT323&display=swap" },
     ],
   }),
   component: Game,
