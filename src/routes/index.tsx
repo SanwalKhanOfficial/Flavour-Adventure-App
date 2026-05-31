@@ -756,7 +756,7 @@ function BillScreen({
       >
         <div className="px-6 pt-6 pb-10">
           <div className="text-center">
-            <h3 className="text-3xl tracking-widest">EL RINCÓN</h3>
+            <h3 className="text-3xl tracking-widest">CRAVE CRAFTER</h3>
             <p className="text-base leading-tight">Khao Peo Zindigi Jeo</p>
             <p className="text-sm opacity-70">— * — * — * — * —</p>
           </div>
