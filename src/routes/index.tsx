@@ -144,6 +144,7 @@ function Game() {
             discount={discount}
             deliveryFee={deliveryFee}
             tax={tax}
+            taxRate={taxRate}
             total={total}
             promo={promo}
             promoInput={promoInput}
@@ -151,6 +152,8 @@ function Game() {
             applyPromo={applyPromo}
             removePromo={() => { setPromo(null); setPromoInput(""); flash("Promo removed"); }}
             orderType={customer.orderType}
+            payment={customer.payment}
+            setPayment={(p) => setCustomer({ ...customer, payment: p })}
             onAdd={add}
             onRemove={remove}
             onClear={clearItem}
@@ -166,6 +169,7 @@ function Game() {
             discount={discount}
             deliveryFee={deliveryFee}
             tax={tax}
+            taxRate={taxRate}
             total={total}
             promo={promo}
             onBack={() => setStage("menu")}
