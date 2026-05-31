@@ -707,6 +707,7 @@ function BillScreen({
   discount,
   deliveryFee,
   tax,
+  taxRate,
   total,
   promo,
   onBack,
@@ -718,6 +719,7 @@ function BillScreen({
   discount: number;
   deliveryFee: number;
   tax: number;
+  taxRate: number;
   total: number;
   promo: { code: string; off: number; label: string } | null;
   onBack: () => void;
