@@ -508,10 +508,10 @@ function MenuScreen({
 
       <aside className="lg:sticky lg:top-24 lg:self-start">
         <div className="pixel-border rounded-lg bg-card p-4">
-          <h3 className="pixel text-sm text-secondary">🛒 INVENTORY</h3>
-          <div className="mt-3 space-y-2 text-lg">
+          <h3 className="pixel text-base text-primary">Your Order</h3>
+          <div className="mt-3 space-y-2 text-base">
             {cart.every((q) => q === 0) ? (
-              <p className="text-muted-foreground">Empty… go grab some loot!</p>
+              <p className="text-muted-foreground italic">No dishes selected yet.</p>
             ) : (
               cart.map((q, i) =>
                 q > 0 ? (
@@ -519,7 +519,7 @@ function MenuScreen({
                     <span className="truncate">
                       {ITEMS[i].emoji} {labelOf(ITEMS[i])} ×{q}
                     </span>
-                    <span className="pixel text-[10px] text-coin">
+                    <span className="pixel text-[11px] text-coin">
                       Rs.{q * ITEMS[i].price}
                     </span>
                   </div>
@@ -528,8 +528,32 @@ function MenuScreen({
             )}
           </div>
 
+          {/* Payment method */}
+          <div className="mt-4 border-t border-border/60 pt-3">
+            <span className="mb-2 block pixel text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Payment Method</span>
+            <div className="grid grid-cols-2 gap-2">
+              {(["cod", "card"] as const).map((m) => {
+                const active = payment === m;
+                const label = m === "cod" ? "Cash · 16%" : "Card · 5%";
+                const icon = m === "cod" ? "💵" : "💳";
+                return (
+                  <button
+                    key={m}
+                    onClick={() => setPayment(m)}
+                    className={`pixel-border-sm rounded-md px-2 py-2 pixel text-[10px] transition ${
+                      active ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"
+                    }`}
+                    style={active ? { backgroundImage: "var(--gradient-primary)" } : undefined}
+                  >
+                    <span className="mr-1">{icon}</span>{label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Promo */}
-          <div className="mt-4 border-t-2 border-dashed border-border pt-3">
+          <div className="mt-3 border-t border-border/60 pt-3">
             {promo ? (
               <div className="flex items-center justify-between gap-2 rounded-md bg-success/15 px-2 py-1.5">
                 <span className="pixel text-[9px] text-success">✓ {promo.code} · {promo.label}</span>
@@ -540,7 +564,7 @@ function MenuScreen({
                 <input
                   value={promoInput}
                   onChange={(e) => setPromoInput(e.target.value)}
-                  placeholder="PROMO CODE"
+                  placeholder="Promo code"
                   className="pixel-border-sm flex-1 rounded-md bg-input px-2 py-1.5 text-base uppercase outline-none focus:ring-2 focus:ring-ring"
                 />
                 <button
@@ -553,11 +577,11 @@ function MenuScreen({
             )}
           </div>
 
-          <div className="mt-3 space-y-1 border-t-2 border-dashed border-border pt-3 text-base">
+          <div className="mt-3 space-y-1 border-t border-border/60 pt-3 text-base">
             <Row k="Subtotal" v={`Rs.${subtotal}`} />
             {discount > 0 && <Row k="Discount" v={`− Rs.${discount}`} accent="text-success" />}
             {deliveryFee > 0 && <Row k="Delivery" v={`Rs.${deliveryFee}`} />}
-            <Row k="Tax (5%)" v={`Rs.${tax}`} />
+            <Row k={`Tax (${Math.round(taxRate * 100)}%)`} v={`Rs.${tax}`} />
           </div>
 
           <div className="mt-2 flex items-center justify-between border-t-2 border-double border-border pt-2">
