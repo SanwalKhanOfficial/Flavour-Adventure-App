@@ -279,18 +279,20 @@ function IntroScreen({
 
   return (
     <section className="mx-auto max-w-2xl animate-pop">
-      <div className="mb-6 text-center">
-        <div className="mb-3 text-6xl animate-float">👨‍🍳</div>
-        <p className="pixel text-[10px] uppercase tracking-[0.45em] text-primary/80">Fine Dining · Delivered</p>
-        <h2 className="pixel mt-2 text-3xl text-primary sm:text-5xl">
+      <div className="mb-8 text-center">
+        <div className="mb-4 inline-block rounded-full bg-primary/10 p-5 animate-float">
+          <div className="text-5xl">👨‍🍳</div>
+        </div>
+        <p className="pixel text-xs uppercase tracking-[0.35em] text-primary/80 font-semibold">Fine Dining · Delivered</p>
+        <h2 className="pixel mt-3 text-4xl text-primary sm:text-5xl">
           Crave Crafter
         </h2>
-        <p className="mt-3 text-lg italic text-muted-foreground">
+        <p className="mt-3 text-lg text-muted-foreground">
           Khao Peo Zindigi Jeo — share a few details to begin your reservation.
         </p>
       </div>
 
-      <div className="pixel-border rounded-lg bg-card p-6">
+      <div className="pixel-border rounded-2xl bg-card p-6">
         {/* Order type */}
         <div className="mb-4">
           <span className="mb-1.5 block pixel text-[10px] text-accent">ORDER TYPE</span>
