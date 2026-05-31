@@ -456,18 +456,18 @@ function MenuScreen({
   return (
     <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div>
-        <div className="mb-4 flex items-end justify-between">
-          <h2 className="pixel text-stroke text-lg text-accent sm:text-xl">SELECT DISH</h2>
-          <span className="pixel text-[10px] text-muted-foreground">CHOOSE WISELY</span>
+        <div className="mb-5 flex items-end justify-between">
+          <h2 className="pixel text-stroke text-xl text-accent sm:text-2xl font-semibold">Select Dish</h2>
+          <span className="pixel text-xs text-muted-foreground uppercase tracking-wider">Choose Wisely</span>
         </div>
 
-        <div className="mb-4 flex flex-wrap gap-2">
+        <div className="mb-5 flex flex-wrap gap-2">
           {filters.map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`pixel-border-sm rounded-md px-2.5 py-1 pixel text-[9px] transition ${
-                filter === f ? "bg-primary text-primary-foreground" : "bg-card"
+              className={`rounded-full px-4 py-2 pixel text-[10px] font-semibold transition shadow-sm ${
+                filter === f ? "bg-primary text-primary-foreground shadow-glow" : "bg-card border border-border/50 hover:bg-muted"
               }`}
             >
               {f.toUpperCase()}
