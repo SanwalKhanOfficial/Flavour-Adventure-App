@@ -185,7 +185,7 @@ function Game() {
 
       {toast && (
         <div className="pointer-events-none fixed inset-x-0 top-24 z-50 flex justify-center">
-          <div className="animate-pop pixel-border rounded-md bg-card px-4 py-2 pixel text-xs text-accent">
+          <div className="animate-pop rounded-2xl bg-card px-5 py-3 pixel text-sm text-accent shadow-lg border border-accent/20">
             {toast}
           </div>
         </div>
@@ -295,7 +295,7 @@ function IntroScreen({
       <div className="pixel-border rounded-2xl bg-card p-6">
         {/* Order type */}
         <div className="mb-4">
-          <span className="mb-1.5 block pixel text-[10px] text-accent">ORDER TYPE</span>
+          <span className="mb-2 block pixel text-[11px] uppercase tracking-wider text-accent font-semibold">Order Type</span>
           <div className="grid grid-cols-2 gap-2">
             {(["delivery", "pickup"] as const).map((t) => {
               const active = customer.orderType === t;
@@ -303,8 +303,8 @@ function IntroScreen({
                 <button
                   key={t}
                   onClick={() => setCustomer({ ...customer, orderType: t })}
-                  className={`pixel-border-sm rounded-md px-3 py-2 pixel text-[10px] transition ${
-                    active ? "bg-accent text-accent-foreground" : "bg-background"
+                  className={`rounded-xl px-3 py-2.5 pixel text-[11px] font-semibold transition shadow-sm ${
+                    active ? "bg-primary text-primary-foreground shadow-glow" : "bg-muted hover:bg-muted/80"
                   }`}
                 >
                   {t === "delivery" ? "🛵 DELIVERY" : "🏃 PICKUP"}
@@ -346,19 +346,19 @@ function IntroScreen({
 
 
         {err && (
-          <p className="mb-3 pixel text-[10px] text-destructive">⚠ {err}</p>
+          <p className="mb-3 pixel text-xs text-destructive font-semibold">⚠ {err}</p>
         )}
 
         <button
           onClick={submit}
-          className="primary-glow pixel-border w-full rounded-md bg-primary px-6 py-4 pixel text-sm text-primary-foreground transition active:translate-y-0.5"
+          className="primary-glow w-full rounded-xl bg-primary px-6 py-4 pixel text-sm text-primary-foreground transition active:translate-y-0.5 font-semibold shadow-lg"
           style={{ backgroundImage: "var(--gradient-primary)" }}
         >
           ▶ START YOUR ORDER
         </button>
 
-        <p className="mt-3 text-center text-sm text-muted-foreground">
-          🎁 Try promo <span className="pixel text-[10px] text-coin">HUNGRY10</span> at checkout
+        <p className="mt-4 text-center text-sm text-muted-foreground">
+          🎁 Try promo <span className="pixel text-xs text-coin font-semibold">HUNGRY10</span> at checkout
         </p>
       </div>
     </section>
@@ -382,14 +382,14 @@ function Field({
 }) {
   return (
     <label className="mb-4 block">
-      <span className="mb-1.5 block pixel text-[10px] text-accent">{label}</span>
+      <span className="mb-1.5 block pixel text-[11px] uppercase tracking-wider text-accent font-semibold">{label}</span>
       {textarea ? (
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={2}
-          className="pixel-border-sm w-full rounded-md bg-input px-3 py-2 text-lg text-foreground outline-none focus:ring-2 focus:ring-ring"
+          className="soft-shadow w-full rounded-xl bg-input px-4 py-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring border border-border/50 transition"
         />
       ) : (
         <input
@@ -397,7 +397,7 @@ function Field({
           inputMode={inputMode}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="pixel-border-sm w-full rounded-md bg-input px-3 py-2 text-lg text-foreground outline-none focus:ring-2 focus:ring-ring"
+          className="soft-shadow w-full rounded-xl bg-input px-4 py-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring border border-border/50 transition"
         />
       )}
     </label>
