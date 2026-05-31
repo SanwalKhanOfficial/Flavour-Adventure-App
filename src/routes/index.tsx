@@ -10,15 +10,15 @@ import waffleImg from "@/assets/dishes/waffle.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "El Rincón — Arcade Food Ordering" },
-      { name: "description", content: "An arcade-style restaurant ordering game. Pick your dishes, fill your cart, and clear the bill!" },
-      { property: "og:title", content: "El Rincón — Arcade Food Ordering" },
-      { property: "og:description", content: "Khao Peo Zindigi Jeo — order food, arcade-game style." },
+      { title: "Crave Crafter — Fine Dining, Delivered" },
+      { name: "description", content: "Crave Crafter — a refined five-star restaurant experience. Curated dishes, elegant service, delivered to your door." },
+      { property: "og:title", content: "Crave Crafter — Fine Dining, Delivered" },
+      { property: "og:description", content: "Khao Peo Zindigi Jeo — a refined ordering experience." },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&family=VT323&display=swap" },
     ],
   }),
   component: Game,
@@ -60,7 +60,7 @@ const KARAHI_FULL = 4;
 const PROMOS: Record<string, { off: number; label: string }> = {
   HUNGRY10: { off: 0.10, label: "10% off" },
   FIRST20: { off: 0.20, label: "20% off · first order" },
-  RINCON15: { off: 0.15, label: "15% off · loyalty" },
+  CRAVE15: { off: 0.15, label: "15% off · loyalty" },
 };
 
 type Stage = "intro" | "menu" | "bill";
@@ -94,7 +94,8 @@ function Game() {
   const discount = promo ? Math.round(subtotal * promo.off) : 0;
   const deliveryFee = customer.orderType === "delivery" && subtotal > 0 ? 150 : 0;
   const taxable = Math.max(0, subtotal - discount);
-  const tax = Math.round(taxable * 0.05);
+  const taxRate = customer.payment === "cod" ? 0.16 : 0.05;
+  const tax = Math.round(taxable * taxRate);
   const total = taxable + tax + deliveryFee;
 
   const flash = (msg: string) => {
@@ -143,6 +144,7 @@ function Game() {
             discount={discount}
             deliveryFee={deliveryFee}
             tax={tax}
+            taxRate={taxRate}
             total={total}
             promo={promo}
             promoInput={promoInput}
@@ -150,6 +152,8 @@ function Game() {
             applyPromo={applyPromo}
             removePromo={() => { setPromo(null); setPromoInput(""); flash("Promo removed"); }}
             orderType={customer.orderType}
+            payment={customer.payment}
+            setPayment={(p) => setCustomer({ ...customer, payment: p })}
             onAdd={add}
             onRemove={remove}
             onClear={clearItem}
@@ -165,6 +169,7 @@ function Game() {
             discount={discount}
             deliveryFee={deliveryFee}
             tax={tax}
+            taxRate={taxRate}
             total={total}
             promo={promo}
             onBack={() => setStage("menu")}
@@ -204,12 +209,12 @@ function Header({
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <button
           onClick={() => setStage("intro")}
-          className="flex items-center gap-2"
+          className="flex items-center gap-3"
         >
           <span className="text-2xl animate-float">🍽️</span>
-          <div className="text-left leading-none">
-            <h1 className="text-stroke text-sm text-primary sm:text-base">EL RINCÓN</h1>
-            <span className="text-xs text-muted-foreground">Khao Peo Zindigi Jeo</span>
+          <div className="text-left leading-tight">
+            <h1 className="pixel text-base tracking-[0.18em] text-primary sm:text-lg">CRAVE CRAFTER</h1>
+            <span className="text-[11px] uppercase tracking-[0.35em] text-muted-foreground">Khao Peo Zindigi Jeo</span>
           </div>
         </button>
 
@@ -276,11 +281,12 @@ function IntroScreen({
     <section className="mx-auto max-w-2xl animate-pop">
       <div className="mb-6 text-center">
         <div className="mb-3 text-6xl animate-float">👨‍🍳</div>
-        <h2 className="text-stroke pixel text-2xl text-primary sm:text-3xl">
-          EL RINCÓN
+        <p className="pixel text-[10px] uppercase tracking-[0.45em] text-primary/80">Fine Dining · Delivered</p>
+        <h2 className="pixel mt-2 text-3xl text-primary sm:text-5xl">
+          Crave Crafter
         </h2>
-        <p className="mt-3 text-xl text-muted-foreground">
-          Khao Peo Zindigi Jeo — enter your details to begin your order.
+        <p className="mt-3 text-lg italic text-muted-foreground">
+          Khao Peo Zindigi Jeo — share a few details to begin your reservation.
         </p>
       </div>
 
@@ -336,26 +342,6 @@ function IntroScreen({
           textarea
         />
 
-        {/* Payment */}
-        <div className="mb-4">
-          <span className="mb-1.5 block pixel text-[10px] text-accent">PAYMENT METHOD</span>
-          <div className="grid grid-cols-2 gap-2">
-            {(["cod", "card"] as const).map((m) => {
-              const active = customer.payment === m;
-              return (
-                <button
-                  key={m}
-                  onClick={() => setCustomer({ ...customer, payment: m })}
-                  className={`pixel-border-sm rounded-md px-3 py-2 pixel text-[10px] transition ${
-                    active ? "bg-accent text-accent-foreground" : "bg-background"
-                  }`}
-                >
-                  {m === "cod" ? "💵 CASH ON DELIVERY" : "💳 CARD"}
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
         {err && (
           <p className="mb-3 pixel text-[10px] text-destructive">⚠ {err}</p>
@@ -424,6 +410,7 @@ function MenuScreen({
   discount,
   deliveryFee,
   tax,
+  taxRate,
   total,
   promo,
   promoInput,
@@ -431,6 +418,8 @@ function MenuScreen({
   applyPromo,
   removePromo,
   orderType,
+  payment,
+  setPayment,
   onAdd,
   onRemove,
   onClear,
@@ -441,6 +430,7 @@ function MenuScreen({
   discount: number;
   deliveryFee: number;
   tax: number;
+  taxRate: number;
   total: number;
   promo: { code: string; off: number; label: string } | null;
   promoInput: string;
@@ -448,6 +438,8 @@ function MenuScreen({
   applyPromo: () => void;
   removePromo: () => void;
   orderType: OrderType;
+  payment: PayMethod;
+  setPayment: (p: PayMethod) => void;
   onAdd: (i: number) => void;
   onRemove: (i: number) => void;
   onClear: (i: number) => void;
@@ -516,10 +508,10 @@ function MenuScreen({
 
       <aside className="lg:sticky lg:top-24 lg:self-start">
         <div className="pixel-border rounded-lg bg-card p-4">
-          <h3 className="pixel text-sm text-secondary">🛒 INVENTORY</h3>
-          <div className="mt-3 space-y-2 text-lg">
+          <h3 className="pixel text-base text-primary">Your Order</h3>
+          <div className="mt-3 space-y-2 text-base">
             {cart.every((q) => q === 0) ? (
-              <p className="text-muted-foreground">Empty… go grab some loot!</p>
+              <p className="text-muted-foreground italic">No dishes selected yet.</p>
             ) : (
               cart.map((q, i) =>
                 q > 0 ? (
@@ -527,7 +519,7 @@ function MenuScreen({
                     <span className="truncate">
                       {ITEMS[i].emoji} {labelOf(ITEMS[i])} ×{q}
                     </span>
-                    <span className="pixel text-[10px] text-coin">
+                    <span className="pixel text-[11px] text-coin">
                       Rs.{q * ITEMS[i].price}
                     </span>
                   </div>
@@ -536,8 +528,32 @@ function MenuScreen({
             )}
           </div>
 
+          {/* Payment method */}
+          <div className="mt-4 border-t border-border/60 pt-3">
+            <span className="mb-2 block pixel text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Payment Method</span>
+            <div className="grid grid-cols-2 gap-2">
+              {(["cod", "card"] as const).map((m) => {
+                const active = payment === m;
+                const label = m === "cod" ? "Cash · 16%" : "Card · 5%";
+                const icon = m === "cod" ? "💵" : "💳";
+                return (
+                  <button
+                    key={m}
+                    onClick={() => setPayment(m)}
+                    className={`pixel-border-sm rounded-md px-2 py-2 pixel text-[10px] transition ${
+                      active ? "bg-primary text-primary-foreground" : "bg-background hover:bg-muted"
+                    }`}
+                    style={active ? { backgroundImage: "var(--gradient-primary)" } : undefined}
+                  >
+                    <span className="mr-1">{icon}</span>{label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Promo */}
-          <div className="mt-4 border-t-2 border-dashed border-border pt-3">
+          <div className="mt-3 border-t border-border/60 pt-3">
             {promo ? (
               <div className="flex items-center justify-between gap-2 rounded-md bg-success/15 px-2 py-1.5">
                 <span className="pixel text-[9px] text-success">✓ {promo.code} · {promo.label}</span>
@@ -548,7 +564,7 @@ function MenuScreen({
                 <input
                   value={promoInput}
                   onChange={(e) => setPromoInput(e.target.value)}
-                  placeholder="PROMO CODE"
+                  placeholder="Promo code"
                   className="pixel-border-sm flex-1 rounded-md bg-input px-2 py-1.5 text-base uppercase outline-none focus:ring-2 focus:ring-ring"
                 />
                 <button
@@ -561,11 +577,11 @@ function MenuScreen({
             )}
           </div>
 
-          <div className="mt-3 space-y-1 border-t-2 border-dashed border-border pt-3 text-base">
+          <div className="mt-3 space-y-1 border-t border-border/60 pt-3 text-base">
             <Row k="Subtotal" v={`Rs.${subtotal}`} />
             {discount > 0 && <Row k="Discount" v={`− Rs.${discount}`} accent="text-success" />}
             {deliveryFee > 0 && <Row k="Delivery" v={`Rs.${deliveryFee}`} />}
-            <Row k="Tax (5%)" v={`Rs.${tax}`} />
+            <Row k={`Tax (${Math.round(taxRate * 100)}%)`} v={`Rs.${tax}`} />
           </div>
 
           <div className="mt-2 flex items-center justify-between border-t-2 border-double border-border pt-2">
@@ -691,6 +707,7 @@ function BillScreen({
   discount,
   deliveryFee,
   tax,
+  taxRate,
   total,
   promo,
   onBack,
@@ -702,6 +719,7 @@ function BillScreen({
   discount: number;
   deliveryFee: number;
   tax: number;
+  taxRate: number;
   total: number;
   promo: { code: string; off: number; label: string } | null;
   onBack: () => void;
@@ -738,7 +756,7 @@ function BillScreen({
       >
         <div className="px-6 pt-6 pb-10">
           <div className="text-center">
-            <h3 className="text-3xl tracking-widest">EL RINCÓN</h3>
+            <h3 className="text-3xl tracking-widest">CRAVE CRAFTER</h3>
             <p className="text-base leading-tight">Khao Peo Zindigi Jeo</p>
             <p className="text-sm opacity-70">— * — * — * — * —</p>
           </div>
@@ -802,7 +820,7 @@ function BillScreen({
             {deliveryFee > 0 && (
               <div className="flex justify-between"><span>Delivery</span><span>Rs.{deliveryFee}</span></div>
             )}
-            <div className="flex justify-between"><span>Tax (5%)</span><span>Rs.{tax}</span></div>
+            <div className="flex justify-between"><span>Tax ({Math.round(taxRate * 100)}% · {customer.payment === "cod" ? "Cash" : "Card"})</span><span>Rs.{tax}</span></div>
           </div>
 
           <div className="my-2 border-t border-double border-neutral-700" />
@@ -825,7 +843,14 @@ function BillScreen({
             </div>
             <span className="sr-only">barcode</span>
           </div>
-          <p className="text-center text-sm tracking-[0.3em] mt-1">{orderNo}-ELR</p>
+          <p className="text-center text-sm tracking-[0.3em] mt-1">{orderNo}-CRC</p>
+
+          <div className="mt-4 border-t border-dashed border-neutral-500 pt-3 text-center">
+            <p className="text-xl italic" style={{ fontFamily: "'Playfair Display', serif" }}>
+              "Tussi ja rahe ho? Mat Jao"
+            </p>
+            <p className="mt-1 text-sm opacity-70">— With love, Crave Crafter</p>
+          </div>
         </div>
       </div>
 
