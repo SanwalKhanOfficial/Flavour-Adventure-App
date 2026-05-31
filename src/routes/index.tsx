@@ -630,57 +630,57 @@ function DishCard({
   onClear: () => void;
 }) {
   return (
-    <div className="pixel-border group relative overflow-hidden rounded-lg bg-card transition hover:-translate-y-1">
-      <div className="relative h-40 overflow-hidden">
+    <div className="pixel-border group relative overflow-hidden rounded-2xl bg-card transition hover:-translate-y-1 hover:shadow-glow">
+      <div className="relative h-44 overflow-hidden">
         <img
           src={item.image}
           alt={item.name}
           loading="lazy"
           width={600}
           height={600}
-          className="h-full w-full object-cover transition group-hover:scale-105"
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
         />
         <div
           className="pointer-events-none absolute inset-0"
-          style={{ background: `linear-gradient(180deg, transparent 55%, color-mix(in oklab, ${item.color} 40%, transparent))` }}
+          style={{ background: `linear-gradient(180deg, transparent 45%, color-mix(in oklab, ${item.color} 25%, transparent))` }}
         />
-        <span className="pixel-border-sm absolute left-2 top-2 rounded-md bg-background/80 px-2 py-1 text-lg backdrop-blur">
+        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-lg shadow-sm backdrop-blur">
           {item.emoji}
         </span>
         {qty > 0 && (
-          <span className="pixel-border-sm absolute right-2 top-2 rounded-md bg-secondary px-2 py-1 pixel text-[10px] text-secondary-foreground">
+          <span className="absolute right-3 top-3 rounded-full bg-secondary px-3 py-1 pixel text-[10px] text-secondary-foreground font-semibold shadow-sm">
             ×{qty}
           </span>
         )}
         {item.tags && item.tags.length > 0 && (
-          <div className="absolute bottom-2 left-2 flex flex-wrap gap-1">
+          <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5">
             {item.tags.map((t) => <TagPill key={t} t={t} />)}
           </div>
         )}
       </div>
 
-      <div className="p-3">
+      <div className="p-4">
         <div className="flex items-center justify-between gap-2">
-          <h4 className="pixel text-[11px] leading-tight text-foreground">{item.name}</h4>
-          <span className="pixel text-[10px] text-coin">Rs.{item.price}</span>
+          <h4 className="pixel text-sm leading-tight text-foreground font-semibold">{item.name}</h4>
+          <span className="pixel text-sm text-coin font-bold">Rs.{item.price}</span>
         </div>
-        {item.desc && <p className="mt-1 text-sm leading-tight text-muted-foreground">{item.desc}</p>}
+        {item.desc && <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{item.desc}</p>}
 
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-2">
           <button
             onClick={onRemove}
             disabled={qty === 0}
-            className="pixel-border-sm h-9 w-9 rounded-md bg-muted pixel text-xs disabled:opacity-40"
+            className="h-10 w-10 rounded-xl bg-muted pixel text-base font-bold disabled:opacity-40 shadow-sm hover:bg-muted/80 transition"
             aria-label={`Remove ${item.name}`}
           >
             −
           </button>
-          <div className="pixel-border-sm flex h-9 flex-1 items-center justify-center rounded-md bg-background pixel text-xs">
+          <div className="flex h-10 flex-1 items-center justify-center rounded-xl bg-background pixel text-sm font-semibold shadow-sm border border-border/30">
             {qty}
           </div>
           <button
             onClick={onAdd}
-            className="pixel-border-sm h-9 w-9 rounded-md bg-primary pixel text-xs text-primary-foreground"
+            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md transition"
             style={{ backgroundImage: "var(--gradient-primary)" }}
             aria-label={`Add ${item.name}`}
           >
@@ -689,7 +689,7 @@ function DishCard({
           {qty > 0 && (
             <button
               onClick={onClear}
-              className="pixel-border-sm h-9 rounded-md bg-destructive px-2 pixel text-[10px] text-destructive-foreground"
+              className="h-10 rounded-xl bg-destructive px-3 pixel text-xs text-destructive-foreground font-semibold shadow-sm hover:bg-destructive/90 transition"
             >
               ✕
             </button>
@@ -747,11 +747,11 @@ function BillScreen({
       </div>
 
       <div
-        className="relative bg-[#fdfaf1] text-neutral-800 shadow-2xl"
+        className="relative bg-[#fff9f0] text-neutral-800 shadow-2xl"
         style={{
           fontFamily: "'VT323', ui-monospace, monospace",
           backgroundImage:
-            "repeating-linear-gradient(0deg, rgba(0,0,0,0.04) 0 1px, transparent 1px 4px)",
+            "repeating-linear-gradient(0deg, rgba(0,0,0,0.03) 0 1px, transparent 1px 4px)",
           clipPath:
             "polygon(0 0, 100% 0, 100% calc(100% - 12px), 96% 100%, 92% calc(100% - 12px), 88% 100%, 84% calc(100% - 12px), 80% 100%, 76% calc(100% - 12px), 72% 100%, 68% calc(100% - 12px), 64% 100%, 60% calc(100% - 12px), 56% 100%, 52% calc(100% - 12px), 48% 100%, 44% calc(100% - 12px), 40% 100%, 36% calc(100% - 12px), 32% 100%, 28% calc(100% - 12px), 24% 100%, 20% calc(100% - 12px), 16% 100%, 12% calc(100% - 12px), 8% 100%, 4% calc(100% - 12px), 0 100%)",
         }}
