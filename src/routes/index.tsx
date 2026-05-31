@@ -859,19 +859,19 @@ function BillScreen({
       <div className="mt-6 flex flex-wrap gap-3 print:hidden">
         <button
           onClick={onBack}
-          className="pixel-border-sm flex-1 rounded-md bg-muted px-4 py-3 pixel text-[10px]"
+          className="flex-1 rounded-xl bg-muted px-4 py-3.5 pixel text-sm font-semibold shadow-sm hover:bg-muted/80 transition"
         >
           ◀ EDIT ORDER
         </button>
         <button
           onClick={() => window.print()}
-          className="pixel-border-sm flex-1 rounded-md bg-accent px-4 py-3 pixel text-[10px] text-accent-foreground"
+          className="flex-1 rounded-xl bg-accent px-4 py-3.5 pixel text-sm text-accent-foreground font-semibold shadow-sm hover:bg-accent/90 transition"
         >
           🖨 PRINT
         </button>
         <button
           onClick={onNewGame}
-          className="pixel-border flex-1 rounded-md bg-primary px-4 py-3 pixel text-[10px] text-primary-foreground"
+          className="flex-1 rounded-xl bg-primary px-4 py-3.5 pixel text-sm text-primary-foreground font-semibold shadow-lg hover:shadow-xl transition"
           style={{ backgroundImage: "var(--gradient-primary)" }}
         >
           NEW ORDER ▶
@@ -913,43 +913,43 @@ function KarahiCard({
   const totalQty = qtyHalf + qtyFull;
 
   return (
-    <div className="pixel-border group relative overflow-hidden rounded-lg bg-card transition hover:-translate-y-1">
-      <div className="relative h-40 overflow-hidden">
+    <div className="pixel-border group relative overflow-hidden rounded-2xl bg-card transition hover:-translate-y-1 hover:shadow-glow">
+      <div className="relative h-44 overflow-hidden">
         <img
           src={half.image}
           alt="Beef Karahi"
           loading="lazy"
           width={600}
           height={600}
-          className="h-full w-full object-cover transition group-hover:scale-105"
+          className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
         />
         <div
           className="pointer-events-none absolute inset-0"
-          style={{ background: `linear-gradient(180deg, transparent 55%, color-mix(in oklab, ${half.color} 40%, transparent))` }}
+          style={{ background: `linear-gradient(180deg, transparent 45%, color-mix(in oklab, ${half.color} 25%, transparent))` }}
         />
-        <span className="pixel-border-sm absolute left-2 top-2 rounded-md bg-background/80 px-2 py-1 text-lg backdrop-blur">
+        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-2.5 py-1 text-lg shadow-sm backdrop-blur">
           🍛
         </span>
         {totalQty > 0 && (
-          <span className="pixel-border-sm absolute right-2 top-2 rounded-md bg-secondary px-2 py-1 pixel text-[10px] text-secondary-foreground">
+          <span className="absolute right-3 top-3 rounded-full bg-secondary px-3 py-1 pixel text-[10px] text-secondary-foreground font-semibold shadow-sm">
             ×{totalQty}
           </span>
         )}
         {half.tags && (
-          <div className="absolute bottom-2 left-2 flex flex-wrap gap-1">
+          <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5">
             {half.tags.map((t) => <TagPill key={t} t={t} />)}
           </div>
         )}
       </div>
 
-      <div className="p-3">
+      <div className="p-4">
         <div className="flex items-center justify-between gap-2">
-          <h4 className="pixel text-[11px] leading-tight text-foreground">Beef Karahi</h4>
-          <span className="pixel text-[10px] text-coin">Rs.{active.price}</span>
+          <h4 className="pixel text-sm leading-tight text-foreground font-semibold">Beef Karahi</h4>
+          <span className="pixel text-sm text-coin font-bold">Rs.{active.price}</span>
         </div>
-        {half.desc && <p className="mt-1 text-sm leading-tight text-muted-foreground">{half.desc}</p>}
+        {half.desc && <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{half.desc}</p>}
 
-        <div className="mt-2 grid grid-cols-2 gap-1">
+        <div className="mt-3 grid grid-cols-2 gap-2">
           {(["Half", "Full"] as const).map((s) => {
             const it = s === "Half" ? half : full;
             const q = s === "Half" ? qtyHalf : qtyFull;
@@ -958,8 +958,8 @@ function KarahiCard({
               <button
                 key={s}
                 onClick={() => setSize(s)}
-                className={`pixel-border-sm rounded-md px-2 py-1.5 pixel text-[9px] transition ${
-                  isActive ? "bg-accent text-accent-foreground" : "bg-background"
+                className={`rounded-xl px-2 py-2 pixel text-[10px] font-semibold transition shadow-sm ${
+                  isActive ? "bg-primary text-primary-foreground shadow-glow" : "bg-muted hover:bg-muted/80"
                 }`}
               >
                 {s.toUpperCase()} · Rs.{it.price}
@@ -969,20 +969,20 @@ function KarahiCard({
           })}
         </div>
 
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-2">
           <button
             onClick={() => onRemove(size)}
             disabled={qty === 0}
-            className="pixel-border-sm h-9 w-9 rounded-md bg-muted pixel text-xs disabled:opacity-40"
+            className="h-10 w-10 rounded-xl bg-muted pixel text-base font-bold disabled:opacity-40 shadow-sm hover:bg-muted/80 transition"
           >
             −
           </button>
-          <div className="pixel-border-sm flex h-9 flex-1 items-center justify-center rounded-md bg-background pixel text-[10px]">
+          <div className="flex h-10 flex-1 items-center justify-center rounded-xl bg-background pixel text-xs font-semibold shadow-sm border border-border/30">
             {size} ×{qty}
           </div>
           <button
             onClick={() => onAdd(size)}
-            className="pixel-border-sm h-9 w-9 rounded-md bg-primary pixel text-xs text-primary-foreground"
+            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md transition"
             style={{ backgroundImage: "var(--gradient-primary)" }}
           >
             +
@@ -990,7 +990,7 @@ function KarahiCard({
           {totalQty > 0 && (
             <button
               onClick={onClearAll}
-              className="pixel-border-sm h-9 rounded-md bg-destructive px-2 pixel text-[10px] text-destructive-foreground"
+              className="h-10 rounded-xl bg-destructive px-3 pixel text-xs text-destructive-foreground font-semibold shadow-sm hover:bg-destructive/90 transition"
             >
               ✕
             </button>
