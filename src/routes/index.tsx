@@ -1,5 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+/* ---------------- Fly-to-cart animation ---------------- */
+function flyToCart(originEl: HTMLElement | null, emoji: string) {
+  if (typeof window === "undefined" || !originEl) return;
+  const target = document.getElementById("cart-target");
+  if (!target) return;
+  const from = originEl.getBoundingClientRect();
+  const to = target.getBoundingClientRect();
+  const ghost = document.createElement("div");
+  ghost.textContent = emoji;
+  ghost.style.cssText = `
+    position:fixed;left:${from.left + from.width / 2 - 18}px;top:${from.top + from.height / 2 - 18}px;
+    width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+    font-size:28px;z-index:9999;pointer-events:none;
+    filter:drop-shadow(0 6px 12px rgba(0,0,0,0.25));
+    transition:transform 700ms cubic-bezier(.5,-0.2,.3,1.3),opacity 700ms ease-out;
+  `;
+  document.body.appendChild(ghost);
+  const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+  const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+  requestAnimationFrame(() => {
+    ghost.style.transform = `translate(${dx}px, ${dy}px) scale(0.2) rotate(540deg)`;
+    ghost.style.opacity = "0.2";
+  });
+  window.setTimeout(() => {
+    ghost.remove();
+    target.classList.add("cart-bump");
+    window.setTimeout(() => target.classList.remove("cart-bump"), 400);
+  }, 720);
+}
 import lasagnaImg from "@/assets/dishes/lasagna.jpg";
 import pastaImg from "@/assets/dishes/pasta.jpg";
 import friesImg from "@/assets/dishes/fries.jpg";
@@ -219,7 +249,9 @@ function Header({
         </button>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <Badge label={`x${itemCount}`} icon="🛒" tone="accent" />
+          <div id="cart-target" className="relative">
+            <Badge label={`x${itemCount}`} icon="🛒" tone="accent" />
+          </div>
           <div className="pixel-border-sm flex items-center gap-2 rounded-full bg-background px-4 py-1.5">
             <span className="animate-coin text-lg">🪙</span>
             <span className="pixel text-sm font-semibold text-coin">Rs.{total}</span>
@@ -280,9 +312,7 @@ function IntroScreen({
   return (
     <section className="mx-auto max-w-2xl animate-pop">
       <div className="mb-8 text-center">
-        <div className="mb-4 inline-block rounded-full bg-primary/10 p-5 animate-float">
-          <div className="text-5xl">👨‍🍳</div>
-        </div>
+        <InteractiveChef />
         <p className="pixel text-xs uppercase tracking-[0.35em] text-primary/80 font-semibold">Fine Dining · Delivered</p>
         <h2 className="pixel mt-3 text-4xl text-primary sm:text-5xl">
           Crave Crafter
@@ -679,8 +709,8 @@ function DishCard({
             {qty}
           </div>
           <button
-            onClick={onAdd}
-            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md transition"
+            onClick={(e) => { flyToCart(e.currentTarget, item.emoji); onAdd(); }}
+            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md hover:scale-110 active:scale-95 transition"
             style={{ backgroundImage: "var(--gradient-primary)" }}
             aria-label={`Add ${item.name}`}
           >
@@ -981,8 +1011,8 @@ function KarahiCard({
             {size} ×{qty}
           </div>
           <button
-            onClick={() => onAdd(size)}
-            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md transition"
+            onClick={(e) => { flyToCart(e.currentTarget, "🍛"); onAdd(size); }}
+            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md hover:scale-110 active:scale-95 transition"
             style={{ backgroundImage: "var(--gradient-primary)" }}
           >
             +
@@ -997,6 +1027,71 @@ function KarahiCard({
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ---------------- Interactive Chef ---------------- */
+const CHEF_TIPS = [
+  "Welcome! What shall I cook for you today?",
+  "Psst… try the Beef Karahi 🌶️ — chef's secret!",
+  "Tussi great ho. Order karo na 😋",
+  "Tip: promo HUNGRY10 saves you 10% 🤫",
+  "Hot, fresh, and on the way! 🍽️",
+];
+
+function InteractiveChef() {
+  const [msg, setMsg] = useState(CHEF_TIPS[0]);
+  const [bounce, setBounce] = useState(false);
+  const [hover, setHover] = useState(false);
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setMsg((m) => {
+        const i = CHEF_TIPS.indexOf(m);
+        return CHEF_TIPS[(i + 1) % CHEF_TIPS.length];
+      });
+    }, 3800);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const poke = () => {
+    setBounce(true);
+    setMsg(CHEF_TIPS[Math.floor(Math.random() * CHEF_TIPS.length)]);
+    window.setTimeout(() => setBounce(false), 600);
+  };
+
+  return (
+    <div className="relative mx-auto mb-6 inline-block">
+      <div
+        className={`pointer-events-none absolute left-1/2 -translate-x-1/2 -top-14 whitespace-nowrap rounded-2xl bg-card px-4 py-2 text-sm text-foreground shadow-lg border border-primary/20 transition-all duration-300 ${
+          hover || bounce ? "opacity-100 -translate-y-0" : "opacity-90"
+        }`}
+        key={msg}
+      >
+        <span className="animate-pop inline-block">{msg}</span>
+        <span className="absolute left-1/2 -bottom-1 -translate-x-1/2 h-3 w-3 rotate-45 bg-card border-r border-b border-primary/20" />
+      </div>
+      <button
+        onClick={poke}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        className={`group relative inline-flex items-center justify-center rounded-full bg-primary/10 p-5 cursor-pointer transition-transform duration-300 hover:scale-110 hover:rotate-6 active:scale-95 ${
+          bounce ? "animate-pop" : "animate-float"
+        }`}
+        aria-label="Wake the chef"
+      >
+        <span className="text-6xl select-none drop-shadow-md transition-transform duration-300 group-hover:-rotate-12">
+          👨‍🍳
+        </span>
+        <span className="absolute -right-1 -top-1 text-2xl opacity-0 group-hover:opacity-100 transition-opacity">
+          ✨
+        </span>
+        <span className="absolute -left-2 -bottom-1 text-xl opacity-0 group-hover:opacity-100 transition-opacity">
+          🍳
+        </span>
+      </button>
+      <p className="mt-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">tap the chef</p>
     </div>
   );
 }

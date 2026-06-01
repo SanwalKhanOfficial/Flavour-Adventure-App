@@ -179,3 +179,10 @@
   background-size: 200% 100%;
   animation: shimmer 3s ease-in-out infinite;
 }
+
+@keyframes cart-bump {
+  0%, 100% { transform: scale(1); }
+  30% { transform: scale(1.25) rotate(-8deg); }
+  60% { transform: scale(0.95) rotate(4deg); }
+}
+.cart-bump { animation: cart-bump 0.4s ease-out; }
