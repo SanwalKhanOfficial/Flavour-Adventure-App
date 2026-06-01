@@ -2,33 +2,118 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 
 /* ---------------- Fly-to-cart animation ---------------- */
+type FlyStyle = "fold" | "arc-left" | "arc-right" | "spiral" | "zigzag" | "bounce";
+const FLY_STYLES: Record<string, FlyStyle> = {
+  "🍝": "fold",
+  "🍜": "spiral",
+  "🍟": "zigzag",
+  "🍛": "arc-right",
+  "🍚": "bounce",
+  "🍦": "arc-left",
+};
+
 function flyToCart(originEl: HTMLElement | null, emoji: string) {
   if (typeof window === "undefined" || !originEl) return;
   const target = document.getElementById("cart-target");
   if (!target) return;
   const from = originEl.getBoundingClientRect();
   const to = target.getBoundingClientRect();
+  const startX = from.left + from.width / 2;
+  const startY = from.top + from.height / 2;
+  const endX = to.left + to.width / 2;
+  const endY = to.top + to.height / 2;
+  const dx = endX - startX;
+  const dy = endY - startY;
+
+  // Burst sparkle at origin
+  const burst = document.createElement("div");
+  burst.textContent = "✨";
+  burst.style.cssText = `position:fixed;left:${startX - 12}px;top:${startY - 12}px;font-size:22px;z-index:9998;pointer-events:none;`;
+  document.body.appendChild(burst);
+  burst.animate(
+    [
+      { transform: "scale(0.3)", opacity: 1 },
+      { transform: "scale(1.8)", opacity: 0 },
+    ],
+    { duration: 500, easing: "ease-out" },
+  ).onfinish = () => burst.remove();
+
   const ghost = document.createElement("div");
   ghost.textContent = emoji;
   ghost.style.cssText = `
-    position:fixed;left:${from.left + from.width / 2 - 18}px;top:${from.top + from.height / 2 - 18}px;
-    width:36px;height:36px;display:flex;align-items:center;justify-content:center;
-    font-size:28px;z-index:9999;pointer-events:none;
-    filter:drop-shadow(0 6px 12px rgba(0,0,0,0.25));
-    transition:transform 700ms cubic-bezier(.5,-0.2,.3,1.3),opacity 700ms ease-out;
+    position:fixed;left:${startX - 22}px;top:${startY - 22}px;
+    width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+    font-size:34px;z-index:9999;pointer-events:none;will-change:transform,opacity;
+    filter:drop-shadow(0 8px 16px rgba(0,0,0,0.3));transform-style:preserve-3d;
   `;
   document.body.appendChild(ghost);
-  const dx = to.left + to.width / 2 - (from.left + from.width / 2);
-  const dy = to.top + to.height / 2 - (from.top + from.height / 2);
-  requestAnimationFrame(() => {
-    ghost.style.transform = `translate(${dx}px, ${dy}px) scale(0.2) rotate(540deg)`;
-    ghost.style.opacity = "0.2";
+
+  const style = FLY_STYLES[emoji] ?? "arc-right";
+  let keyframes: Keyframe[];
+  const duration = 900;
+
+  switch (style) {
+    case "fold":
+      // Folds in half, flips, then flies
+      keyframes = [
+        { transform: "translate(0,0) scaleY(1) rotateX(0)", opacity: 1 },
+        { transform: "translate(0,-8px) scaleY(0.15) rotateX(80deg)", opacity: 1, offset: 0.2 },
+        { transform: `translate(${dx * 0.5}px, ${dy * 0.5 - 80}px) scaleY(1) rotateX(360deg) rotate(180deg)`, opacity: 1, offset: 0.6 },
+        { transform: `translate(${dx}px, ${dy}px) scale(0.15) rotateX(720deg)`, opacity: 0.2 },
+      ];
+      break;
+    case "arc-left":
+      keyframes = [
+        { transform: "translate(0,0) scale(1) rotate(0)", opacity: 1 },
+        { transform: `translate(${dx * 0.3 - 60}px, ${dy * 0.4 - 100}px) scale(1.2) rotate(-180deg)`, opacity: 1, offset: 0.5 },
+        { transform: `translate(${dx}px, ${dy}px) scale(0.2) rotate(-540deg)`, opacity: 0.2 },
+      ];
+      break;
+    case "arc-right":
+      keyframes = [
+        { transform: "translate(0,0) scale(1) rotate(0)", opacity: 1 },
+        { transform: `translate(${dx * 0.5 + 80}px, ${dy * 0.4 - 120}px) scale(1.25) rotate(220deg)`, opacity: 1, offset: 0.5 },
+        { transform: `translate(${dx}px, ${dy}px) scale(0.2) rotate(540deg)`, opacity: 0.2 },
+      ];
+      break;
+    case "spiral":
+      keyframes = [
+        { transform: "translate(0,0) scale(1) rotate(0)", opacity: 1 },
+        { transform: `translate(${dx * 0.25}px, ${dy * 0.3 - 60}px) scale(1.3) rotate(360deg)`, opacity: 1, offset: 0.33 },
+        { transform: `translate(${dx * 0.6}px, ${dy * 0.6 - 40}px) scale(0.9) rotate(720deg)`, opacity: 1, offset: 0.66 },
+        { transform: `translate(${dx}px, ${dy}px) scale(0.15) rotate(1080deg)`, opacity: 0.2 },
+      ];
+      break;
+    case "zigzag":
+      keyframes = [
+        { transform: "translate(0,0) scale(1) rotate(0)", opacity: 1 },
+        { transform: `translate(${dx * 0.25 - 50}px, ${dy * 0.25 - 30}px) scale(1.15) rotate(-25deg)`, opacity: 1, offset: 0.25 },
+        { transform: `translate(${dx * 0.5 + 50}px, ${dy * 0.5 - 50}px) scale(1.15) rotate(25deg)`, opacity: 1, offset: 0.5 },
+        { transform: `translate(${dx * 0.75 - 30}px, ${dy * 0.75 - 20}px) scale(1) rotate(-15deg)`, opacity: 1, offset: 0.75 },
+        { transform: `translate(${dx}px, ${dy}px) scale(0.2) rotate(360deg)`, opacity: 0.2 },
+      ];
+      break;
+    case "bounce":
+    default:
+      keyframes = [
+        { transform: "translate(0,0) scale(1)", opacity: 1 },
+        { transform: `translate(${dx * 0.3}px, ${dy * 0.5 - 140}px) scale(1.3) rotate(180deg)`, opacity: 1, offset: 0.4 },
+        { transform: `translate(${dx * 0.7}px, ${dy * 0.85 - 30}px) scale(1.1) rotate(300deg)`, opacity: 1, offset: 0.75 },
+        { transform: `translate(${dx}px, ${dy}px) scale(0.2) rotate(540deg)`, opacity: 0.2 },
+      ];
+      break;
+  }
+
+  const anim = ghost.animate(keyframes, {
+    duration,
+    easing: "cubic-bezier(.5,-0.1,.3,1.2)",
+    fill: "forwards",
   });
-  window.setTimeout(() => {
+  anim.onfinish = () => {
     ghost.remove();
     target.classList.add("cart-bump");
     window.setTimeout(() => target.classList.remove("cart-bump"), 400);
-  }, 720);
+  };
 }
 import lasagnaImg from "@/assets/dishes/lasagna.jpg";
 import pastaImg from "@/assets/dishes/pasta.jpg";
@@ -1032,32 +1117,37 @@ function KarahiCard({
 }
 
 /* ---------------- Interactive Chef ---------------- */
-const CHEF_TIPS = [
-  "Welcome! What shall I cook for you today?",
-  "Psst… try the Beef Karahi 🌶️ — chef's secret!",
-  "Tussi great ho. Order karo na 😋",
-  "Tip: promo HUNGRY10 saves you 10% 🤫",
-  "Hot, fresh, and on the way! 🍽️",
+const CHEF_MOODS: { face: string; msg: string; accent: string }[] = [
+  { face: "👨‍🍳", msg: "Welcome! What shall I cook for you today?", accent: "🍽️" },
+  { face: "🧑‍🍳", msg: "Psst… try the Beef Karahi 🌶️ — chef's secret!", accent: "🌶️" },
+  { face: "😋", msg: "Tussi great ho. Order karo na 😋", accent: "💖" },
+  { face: "🤫", msg: "Tip: promo HUNGRY10 saves you 10% 🤫", accent: "🏷️" },
+  { face: "🔥", msg: "Hot, fresh, and on the way! 🔥", accent: "🍳" },
+  { face: "🥳", msg: "Oye hoye! Great choice — adding sparkle ✨", accent: "✨" },
+  { face: "😤", msg: "Bas? Aur order karo, kitchen is ready!", accent: "🍲" },
+  { face: "🤩", msg: "Wah wah! You have excellent taste 👌", accent: "⭐" },
 ];
 
 function InteractiveChef() {
-  const [msg, setMsg] = useState(CHEF_TIPS[0]);
+  const [idx, setIdx] = useState(0);
   const [bounce, setBounce] = useState(false);
   const [hover, setHover] = useState(false);
+  const mood = CHEF_MOODS[idx];
 
   useEffect(() => {
     const id = window.setInterval(() => {
-      setMsg((m) => {
-        const i = CHEF_TIPS.indexOf(m);
-        return CHEF_TIPS[(i + 1) % CHEF_TIPS.length];
-      });
-    }, 3800);
+      setIdx((i) => (i + 1) % CHEF_MOODS.length);
+    }, 4200);
     return () => window.clearInterval(id);
   }, []);
 
   const poke = () => {
     setBounce(true);
-    setMsg(CHEF_TIPS[Math.floor(Math.random() * CHEF_TIPS.length)]);
+    setIdx((i) => {
+      let n = Math.floor(Math.random() * CHEF_MOODS.length);
+      if (n === i) n = (n + 1) % CHEF_MOODS.length;
+      return n;
+    });
     window.setTimeout(() => setBounce(false), 600);
   };
 
@@ -1067,9 +1157,9 @@ function InteractiveChef() {
         className={`pointer-events-none absolute left-1/2 -translate-x-1/2 -top-14 whitespace-nowrap rounded-2xl bg-card px-4 py-2 text-sm text-foreground shadow-lg border border-primary/20 transition-all duration-300 ${
           hover || bounce ? "opacity-100 -translate-y-0" : "opacity-90"
         }`}
-        key={msg}
+        key={mood.msg}
       >
-        <span className="animate-pop inline-block">{msg}</span>
+        <span className="animate-pop inline-block">{mood.msg}</span>
         <span className="absolute left-1/2 -bottom-1 -translate-x-1/2 h-3 w-3 rotate-45 bg-card border-r border-b border-primary/20" />
       </div>
       <button
@@ -1079,16 +1169,16 @@ function InteractiveChef() {
         className={`group relative inline-flex items-center justify-center rounded-full bg-primary/10 p-5 cursor-pointer transition-transform duration-300 hover:scale-110 hover:rotate-6 active:scale-95 ${
           bounce ? "animate-pop" : "animate-float"
         }`}
-        aria-label="Wake the chef"
+        aria-label="Tap the chef"
       >
-        <span className="text-6xl select-none drop-shadow-md transition-transform duration-300 group-hover:-rotate-12">
-          👨‍🍳
+        <span key={mood.face} className="text-6xl select-none drop-shadow-md transition-transform duration-300 group-hover:-rotate-12 animate-pop inline-block">
+          {mood.face}
         </span>
         <span className="absolute -right-1 -top-1 text-2xl opacity-0 group-hover:opacity-100 transition-opacity">
           ✨
         </span>
-        <span className="absolute -left-2 -bottom-1 text-xl opacity-0 group-hover:opacity-100 transition-opacity">
-          🍳
+        <span key={mood.accent} className="absolute -left-2 -bottom-1 text-xl animate-pop">
+          {mood.accent}
         </span>
       </button>
       <p className="mt-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">tap the chef</p>
