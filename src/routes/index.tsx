@@ -312,9 +312,7 @@ function IntroScreen({
   return (
     <section className="mx-auto max-w-2xl animate-pop">
       <div className="mb-8 text-center">
-        <div className="mb-4 inline-block rounded-full bg-primary/10 p-5 animate-float">
-          <div className="text-5xl">👨‍🍳</div>
-        </div>
+        <InteractiveChef />
         <p className="pixel text-xs uppercase tracking-[0.35em] text-primary/80 font-semibold">Fine Dining · Delivered</p>
         <h2 className="pixel mt-3 text-4xl text-primary sm:text-5xl">
           Crave Crafter
