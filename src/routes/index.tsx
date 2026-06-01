@@ -249,7 +249,9 @@ function Header({
         </button>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <Badge label={`x${itemCount}`} icon="🛒" tone="accent" />
+          <div id="cart-target" className="relative">
+            <Badge label={`x${itemCount}`} icon="🛒" tone="accent" />
+          </div>
           <div className="pixel-border-sm flex items-center gap-2 rounded-full bg-background px-4 py-1.5">
             <span className="animate-coin text-lg">🪙</span>
             <span className="pixel text-sm font-semibold text-coin">Rs.{total}</span>
