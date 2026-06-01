@@ -1,5 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+/* ---------------- Fly-to-cart animation ---------------- */
+function flyToCart(originEl: HTMLElement | null, emoji: string) {
+  if (typeof window === "undefined" || !originEl) return;
+  const target = document.getElementById("cart-target");
+  if (!target) return;
+  const from = originEl.getBoundingClientRect();
+  const to = target.getBoundingClientRect();
+  const ghost = document.createElement("div");
+  ghost.textContent = emoji;
+  ghost.style.cssText = `
+    position:fixed;left:${from.left + from.width / 2 - 18}px;top:${from.top + from.height / 2 - 18}px;
+    width:36px;height:36px;display:flex;align-items:center;justify-content:center;
+    font-size:28px;z-index:9999;pointer-events:none;
+    filter:drop-shadow(0 6px 12px rgba(0,0,0,0.25));
+    transition:transform 700ms cubic-bezier(.5,-0.2,.3,1.3),opacity 700ms ease-out;
+  `;
+  document.body.appendChild(ghost);
+  const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+  const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+  requestAnimationFrame(() => {
+    ghost.style.transform = `translate(${dx}px, ${dy}px) scale(0.2) rotate(540deg)`;
+    ghost.style.opacity = "0.2";
+  });
+  window.setTimeout(() => {
+    ghost.remove();
+    target.classList.add("cart-bump");
+    window.setTimeout(() => target.classList.remove("cart-bump"), 400);
+  }, 720);
+}
 import lasagnaImg from "@/assets/dishes/lasagna.jpg";
 import pastaImg from "@/assets/dishes/pasta.jpg";
 import friesImg from "@/assets/dishes/fries.jpg";
