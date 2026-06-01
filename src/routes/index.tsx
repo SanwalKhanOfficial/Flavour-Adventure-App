@@ -1030,3 +1030,68 @@ function KarahiCard({
     </div>
   );
 }
+
+/* ---------------- Interactive Chef ---------------- */
+const CHEF_TIPS = [
+  "Welcome! What shall I cook for you today?",
+  "Psst… try the Beef Karahi 🌶️ — chef's secret!",
+  "Tussi great ho. Order karo na 😋",
+  "Tip: promo HUNGRY10 saves you 10% 🤫",
+  "Hot, fresh, and on the way! 🍽️",
+];
+
+function InteractiveChef() {
+  const [msg, setMsg] = useState(CHEF_TIPS[0]);
+  const [bounce, setBounce] = useState(false);
+  const [hover, setHover] = useState(false);
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setMsg((m) => {
+        const i = CHEF_TIPS.indexOf(m);
+        return CHEF_TIPS[(i + 1) % CHEF_TIPS.length];
+      });
+    }, 3800);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const poke = () => {
+    setBounce(true);
+    setMsg(CHEF_TIPS[Math.floor(Math.random() * CHEF_TIPS.length)]);
+    window.setTimeout(() => setBounce(false), 600);
+  };
+
+  return (
+    <div className="relative mx-auto mb-6 inline-block">
+      <div
+        className={`pointer-events-none absolute left-1/2 -translate-x-1/2 -top-14 whitespace-nowrap rounded-2xl bg-card px-4 py-2 text-sm text-foreground shadow-lg border border-primary/20 transition-all duration-300 ${
+          hover || bounce ? "opacity-100 -translate-y-0" : "opacity-90"
+        }`}
+        key={msg}
+      >
+        <span className="animate-pop inline-block">{msg}</span>
+        <span className="absolute left-1/2 -bottom-1 -translate-x-1/2 h-3 w-3 rotate-45 bg-card border-r border-b border-primary/20" />
+      </div>
+      <button
+        onClick={poke}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        className={`group relative inline-flex items-center justify-center rounded-full bg-primary/10 p-5 cursor-pointer transition-transform duration-300 hover:scale-110 hover:rotate-6 active:scale-95 ${
+          bounce ? "animate-pop" : "animate-float"
+        }`}
+        aria-label="Wake the chef"
+      >
+        <span className="text-6xl select-none drop-shadow-md transition-transform duration-300 group-hover:-rotate-12">
+          👨‍🍳
+        </span>
+        <span className="absolute -right-1 -top-1 text-2xl opacity-0 group-hover:opacity-100 transition-opacity">
+          ✨
+        </span>
+        <span className="absolute -left-2 -bottom-1 text-xl opacity-0 group-hover:opacity-100 transition-opacity">
+          🍳
+        </span>
+      </button>
+      <p className="mt-2 text-[10px] uppercase tracking-[0.3em] text-muted-foreground">tap the chef</p>
+    </div>
+  );
+}
