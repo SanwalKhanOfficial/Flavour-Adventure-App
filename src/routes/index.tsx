@@ -1011,8 +1011,8 @@ function KarahiCard({
             {size} ×{qty}
           </div>
           <button
-            onClick={() => onAdd(size)}
-            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md transition"
+            onClick={(e) => { flyToCart(e.currentTarget, "🍛"); onAdd(size); }}
+            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md hover:scale-110 active:scale-95 transition"
             style={{ backgroundImage: "var(--gradient-primary)" }}
           >
             +
