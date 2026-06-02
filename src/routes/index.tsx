@@ -964,7 +964,7 @@ function BillScreen({
 
           <div className="mt-4 border-t border-dashed border-neutral-500 pt-3 text-center">
             <p className="text-xl italic" style={{ fontFamily: "'Playfair Display', serif" }}>
-              "Tussi jarahe ho tussi na jao"
+              "Tussi jarahe ho, Tussi na jao"
             </p>
             <p className="mt-1 text-sm opacity-70">— With love, Crave Crafter</p>
           </div>
