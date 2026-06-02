@@ -201,6 +201,7 @@ function Game() {
   const [toast, setToast] = useState<string | null>(null);
   const [promoInput, setPromoInput] = useState("");
   const [promo, setPromo] = useState<{ code: string; off: number; label: string } | null>(null);
+  const [chefRuleOpen, setChefRuleOpen] = useState(false);
 
   const subtotal = useMemo(
     () => cart.reduce((s, q, i) => s + q * ITEMS[i].price, 0),
