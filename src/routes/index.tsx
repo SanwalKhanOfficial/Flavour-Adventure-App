@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import khabyRule from "@/assets/khaby-rule.jpg.asset.json";
 
 /* ---------------- Fly-to-cart animation ---------------- */
 type FlyStyle = "fold" | "arc-left" | "arc-right" | "spiral" | "zigzag" | "bounce";
