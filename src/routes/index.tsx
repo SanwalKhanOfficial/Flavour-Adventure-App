@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import khabyRule from "@/assets/khaby-rule.jpg.asset.json";
 
 /* ---------------- Fly-to-cart animation ---------------- */
 type FlyStyle = "fold" | "arc-left" | "arc-right" | "spiral" | "zigzag" | "bounce";
@@ -200,6 +201,7 @@ function Game() {
   const [toast, setToast] = useState<string | null>(null);
   const [promoInput, setPromoInput] = useState("");
   const [promo, setPromo] = useState<{ code: string; off: number; label: string } | null>(null);
+  const [chefRuleOpen, setChefRuleOpen] = useState(false);
 
   const subtotal = useMemo(
     () => cart.reduce((s, q, i) => s + q * ITEMS[i].price, 0),
@@ -232,6 +234,11 @@ function Game() {
   const applyPromo = () => {
     const code = promoInput.trim().toUpperCase();
     if (!code) return;
+    if (code === "IMP10") {
+      setChefRuleOpen(true);
+      setPromoInput("");
+      return;
+    }
     const p = PROMOS[code];
     if (!p) { flash("Invalid promo code"); return; }
     setPromo({ code, off: p.off, label: p.label });
@@ -302,6 +309,39 @@ function Game() {
         <div className="pointer-events-none fixed inset-x-0 top-24 z-50 flex justify-center">
           <div className="animate-pop rounded-2xl bg-card px-5 py-3 pixel text-sm text-accent shadow-lg border border-accent/20">
             {toast}
+          </div>
+        </div>
+      )}
+
+      {chefRuleOpen && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setChefRuleOpen(false)}
+        >
+          <div
+            className="relative max-w-sm w-full rounded-3xl overflow-hidden border-2 border-accent/40 bg-card shadow-2xl animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setChefRuleOpen(false)}
+              className="absolute top-2 right-2 z-10 h-8 w-8 rounded-full bg-black/60 text-white text-sm grid place-items-center hover:bg-black/80"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+            <img
+              src={khabyRule.url}
+              alt="Chef Rule"
+              className="w-full h-auto block select-none"
+              draggable={false}
+            />
+            <div className="p-4 text-center bg-gradient-to-b from-card to-card/90">
+              <div className="pixel text-[10px] uppercase tracking-widest text-accent/70 mb-2">Chef Rule</div>
+              <p className="text-base font-semibold text-foreground leading-snug">
+                "Khana Sirf photo mein dikhna, asal mein nahi"
+              </p>
+            </div>
           </div>
         </div>
       )}
