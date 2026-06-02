@@ -355,7 +355,7 @@ function Game() {
             <div className="p-4 text-center bg-gradient-to-b from-card to-card/90">
               <div className="pixel text-[10px] uppercase tracking-widest text-accent/70 mb-2">Chef Rule</div>
               <p className="text-sm sm:text-base font-semibold text-foreground leading-snug">
-                "Khana Sirf photo mein dikhna, asal mein nahi"
+                "Khana sirf photo mein hi dikhna han, Asal mein nahiii"
               </p>
               <div className="mt-2 text-[10px] text-muted-foreground/70">tap card to shake · tap outside to close</div>
             </div>
