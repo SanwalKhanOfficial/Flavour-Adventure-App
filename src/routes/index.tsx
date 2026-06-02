@@ -312,6 +312,39 @@ function Game() {
           </div>
         </div>
       )}
+
+      {chefRuleOpen && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setChefRuleOpen(false)}
+        >
+          <div
+            className="relative max-w-sm w-full rounded-3xl overflow-hidden border-2 border-accent/40 bg-card shadow-2xl animate-scale-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setChefRuleOpen(false)}
+              className="absolute top-2 right-2 z-10 h-8 w-8 rounded-full bg-black/60 text-white text-sm grid place-items-center hover:bg-black/80"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+            <img
+              src={khabyRule.url}
+              alt="Chef Rule"
+              className="w-full h-auto block select-none"
+              draggable={false}
+            />
+            <div className="p-4 text-center bg-gradient-to-b from-card to-card/90">
+              <div className="pixel text-[10px] uppercase tracking-widest text-accent/70 mb-2">Chef Rule</div>
+              <p className="text-base font-semibold text-foreground leading-snug">
+                "Khana Sirf photo mein dikhna, asal mein nahi"
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
