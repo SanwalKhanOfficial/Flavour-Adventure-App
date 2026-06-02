@@ -315,32 +315,49 @@ function Game() {
 
       {chefRuleOpen && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 backdrop-blur-sm p-3 sm:p-4 animate-fade-in overflow-y-auto"
           onClick={() => setChefRuleOpen(false)}
         >
           <div
-            className="relative max-w-sm w-full rounded-3xl overflow-hidden border-2 border-accent/40 bg-card shadow-2xl animate-scale-in"
-            onClick={(e) => e.stopPropagation()}
+            className="group relative w-full max-w-[22rem] sm:max-w-md my-auto rounded-3xl overflow-hidden border-2 border-accent/40 bg-card shadow-2xl animate-scale-in transition-transform duration-300 hover:rotate-[-1deg] hover:scale-[1.02] active:scale-95"
+            onClick={(e) => {
+              e.stopPropagation();
+              const el = e.currentTarget;
+              el.animate(
+                [
+                  { transform: "translateX(0) rotate(0deg)" },
+                  { transform: "translateX(-6px) rotate(-2deg)" },
+                  { transform: "translateX(6px) rotate(2deg)" },
+                  { transform: "translateX(-4px) rotate(-1deg)" },
+                  { transform: "translateX(0) rotate(0deg)" },
+                ],
+                { duration: 420, easing: "ease-in-out" },
+              );
+            }}
           >
             <button
               type="button"
-              onClick={() => setChefRuleOpen(false)}
-              className="absolute top-2 right-2 z-10 h-8 w-8 rounded-full bg-black/60 text-white text-sm grid place-items-center hover:bg-black/80"
+              onClick={(e) => { e.stopPropagation(); setChefRuleOpen(false); }}
+              className="absolute top-2 right-2 z-10 h-8 w-8 rounded-full bg-black/60 text-white text-sm grid place-items-center hover:bg-black/80 active:scale-90 transition"
               aria-label="Close"
             >
               ✕
             </button>
-            <img
-              src={khabyRule.url}
-              alt="Chef Rule"
-              className="w-full h-auto block select-none"
-              draggable={false}
-            />
+            <div className="relative w-full bg-black">
+              <img
+                src={khabyRule.url}
+                alt="Chef Rule"
+                className="w-full h-auto max-h-[55vh] sm:max-h-[60vh] object-contain block select-none transition-transform duration-500 group-hover:scale-[1.04]"
+                draggable={false}
+              />
+              <span className="pointer-events-none absolute top-3 left-3 text-2xl animate-bounce">🤌</span>
+            </div>
             <div className="p-4 text-center bg-gradient-to-b from-card to-card/90">
               <div className="pixel text-[10px] uppercase tracking-widest text-accent/70 mb-2">Chef Rule</div>
-              <p className="text-base font-semibold text-foreground leading-snug">
+              <p className="text-sm sm:text-base font-semibold text-foreground leading-snug">
                 "Khana Sirf photo mein dikhna, asal mein nahi"
               </p>
+              <div className="mt-2 text-[10px] text-muted-foreground/70">tap card to shake · tap outside to close</div>
             </div>
           </div>
         </div>
