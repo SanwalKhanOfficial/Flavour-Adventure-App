@@ -234,6 +234,11 @@ function Game() {
   const applyPromo = () => {
     const code = promoInput.trim().toUpperCase();
     if (!code) return;
+    if (code === "IMP10") {
+      setChefRuleOpen(true);
+      setPromoInput("");
+      return;
+    }
     const p = PROMOS[code];
     if (!p) { flash("Invalid promo code"); return; }
     setPromo({ code, off: p.off, label: p.label });
