@@ -633,7 +633,7 @@ function MenuScreen({
           <span className="pixel text-xs text-muted-foreground uppercase tracking-wider">Choose Wisely</span>
         </div>
 
-        <div className="mb-5 flex flex-wrap gap-2">
+        <div className="mb-5 flex flex-wrap items-center gap-2">
           {filters.map((f) => (
             <button
               key={f}
@@ -645,33 +645,58 @@ function MenuScreen({
               {f.toUpperCase()}
             </button>
           ))}
+          <button
+            onClick={(e) => {
+              if (visibleIdx.length === 0) return;
+              const pick = visibleIdx[Math.floor(Math.random() * visibleIdx.length)];
+              const btn = e.currentTarget;
+              btn.animate(
+                [
+                  { transform: "rotate(0) scale(1)" },
+                  { transform: "rotate(-15deg) scale(1.15)" },
+                  { transform: "rotate(15deg) scale(1.15)" },
+                  { transform: "rotate(0) scale(1)" },
+                ],
+                { duration: 500, easing: "ease-in-out" },
+              );
+              onAdd(pick.i);
+              flyToCart(btn, pick.it.emoji);
+            }}
+            className="ml-auto rounded-full bg-gradient-to-r from-accent to-primary px-4 py-2 pixel text-[10px] font-bold text-primary-foreground shadow-glow transition hover:scale-105 active:scale-95"
+            title="Pick a random dish from the current filter"
+          >
+            🎲 SURPRISE ME
+          </button>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {visibleIdx.map(({ it, i }) => {
+        <div key={filter} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {visibleIdx.map(({ it, i }, idx) => {
+            const style = { animationDelay: `${idx * 70}ms`, animationFillMode: "both" as const };
             if (i === KARAHI_HALF) {
               return (
-                <KarahiCard
-                  key="karahi"
-                  half={ITEMS[KARAHI_HALF]}
-                  full={ITEMS[KARAHI_FULL]}
-                  qtyHalf={cart[KARAHI_HALF]}
-                  qtyFull={cart[KARAHI_FULL]}
-                  onAdd={(size) => onAdd(size === "Half" ? KARAHI_HALF : KARAHI_FULL)}
-                  onRemove={(size) => onRemove(size === "Half" ? KARAHI_HALF : KARAHI_FULL)}
-                  onClearAll={() => { onClear(KARAHI_HALF); onClear(KARAHI_FULL); }}
-                />
+                <div key="karahi" className="animate-fade-in" style={style}>
+                  <KarahiCard
+                    half={ITEMS[KARAHI_HALF]}
+                    full={ITEMS[KARAHI_FULL]}
+                    qtyHalf={cart[KARAHI_HALF]}
+                    qtyFull={cart[KARAHI_FULL]}
+                    onAdd={(size) => onAdd(size === "Half" ? KARAHI_HALF : KARAHI_FULL)}
+                    onRemove={(size) => onRemove(size === "Half" ? KARAHI_HALF : KARAHI_FULL)}
+                    onClearAll={() => { onClear(KARAHI_HALF); onClear(KARAHI_FULL); }}
+                  />
+                </div>
               );
             }
             return (
-              <DishCard
-                key={it.name}
-                item={it}
-                qty={cart[i]}
-                onAdd={() => onAdd(i)}
-                onRemove={() => onRemove(i)}
-                onClear={() => onClear(i)}
-              />
+              <div key={it.name} className="animate-fade-in" style={style}>
+                <DishCard
+                  item={it}
+                  qty={cart[i]}
+                  onAdd={() => onAdd(i)}
+                  onRemove={() => onRemove(i)}
+                  onClear={() => onClear(i)}
+                />
+              </div>
             );
           })}
           {visibleIdx.length === 0 && (
