@@ -633,18 +633,26 @@ function MenuScreen({
           <span className="pixel text-xs text-muted-foreground uppercase tracking-wider">Choose Wisely</span>
         </div>
 
-        <div className="mb-5 flex flex-wrap items-center gap-2">
-          {filters.map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`rounded-full px-4 py-2 pixel text-[10px] font-semibold transition shadow-sm ${
-                filter === f ? "bg-primary text-primary-foreground shadow-glow" : "bg-card border border-border/50 hover:bg-muted"
-              }`}
-            >
-              {f.toUpperCase()}
-            </button>
-          ))}
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <div
+            className="-mx-4 flex snap-x snap-mandatory items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {filters.map((f) => (
+              <button
+                key={f}
+                onClick={(e) => {
+                  setFilter(f);
+                  e.currentTarget.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+                }}
+                className={`shrink-0 snap-center rounded-full px-4 py-2 pixel text-[10px] font-semibold transition shadow-sm active:scale-95 ${
+                  filter === f ? "bg-primary text-primary-foreground shadow-glow scale-105" : "bg-card border border-border/50 hover:bg-muted"
+                }`}
+              >
+                {f.toUpperCase()}
+              </button>
+            ))}
+          </div>
           <button
             onClick={(e) => {
               if (visibleIdx.length === 0) return;
@@ -662,7 +670,7 @@ function MenuScreen({
               onAdd(pick.i);
               flyToCart(btn, pick.it.emoji);
             }}
-            className="ml-auto rounded-full bg-gradient-to-r from-accent to-primary px-4 py-2 pixel text-[10px] font-bold text-primary-foreground shadow-glow transition hover:scale-105 active:scale-95"
+            className="w-full shrink-0 rounded-full bg-gradient-to-r from-accent to-primary px-4 py-2 pixel text-[10px] font-bold text-primary-foreground shadow-glow transition hover:scale-105 active:scale-95 sm:ml-auto sm:w-auto"
             title="Pick a random dish from the current filter"
           >
             🎲 SURPRISE ME
