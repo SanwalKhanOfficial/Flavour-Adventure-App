@@ -529,9 +529,8 @@ function IntroScreen({
           ▶ START YOUR ORDER
         </button>
 
-        <p className="mt-4 text-center text-sm text-muted-foreground">
-          🎁 Try promo <span className="pixel text-xs text-coin font-semibold">HUNGRY10</span> at checkout
-        </p>
+        <GiftBox />
+
       </div>
     </section>
   );
