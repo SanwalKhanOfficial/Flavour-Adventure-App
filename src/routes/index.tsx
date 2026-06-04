@@ -246,7 +246,10 @@ function Game() {
   };
 
   return (
-    <main className="relative min-h-screen w-full overflow-hidden">
+    <main className="relative min-h-screen w-full overflow-x-hidden">
+      {/* Decorative background layers can go here */}
+      <div className="mx-auto max-w-6xl px-3 pb-24 pt-4 sm:px-4 sm:pt-6">
+
       <div className="pointer-events-none absolute inset-0 scanlines" aria-hidden />
       <Header itemCount={itemCount} total={total} stage={stage} setStage={setStage} />
 
