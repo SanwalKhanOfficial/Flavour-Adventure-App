@@ -534,7 +534,66 @@ function IntroScreen({
       </div>
     </section>
   );
+
+
+function GiftBox() {
+  const [opened, setOpened] = useState(false);
+  const [shaking, setShaking] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleClick = () => {
+    if (opened) {
+      navigator.clipboard?.writeText("HUNGRY10").catch(() => {});
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+      return;
+    }
+    setShaking(true);
+    setTimeout(() => {
+      setShaking(false);
+      setOpened(true);
+    }, 700);
+  };
+
+  return (
+    <div className="mt-5 flex flex-col items-center gap-2">
+      {!opened ? (
+        <button
+          onClick={handleClick}
+          aria-label="Open surprise gift"
+          className={`text-5xl sm:text-6xl select-none transition-transform hover:scale-110 active:scale-95 ${shaking ? "animate-[wiggle_0.15s_ease-in-out_infinite]" : ""}`}
+          style={{
+            filter: "drop-shadow(0 6px 12px rgba(0,0,0,0.25))",
+            animation: shaking ? "wiggle 0.12s ease-in-out infinite" : "bounce 1.6s ease-in-out infinite",
+          }}
+        >
+          🎁
+        </button>
+      ) : (
+        <button
+          onClick={handleClick}
+          className="animate-scale-in rounded-xl border-2 border-dashed border-coin bg-coin/10 px-4 py-2 text-center transition hover:scale-105 active:scale-95"
+        >
+          <div className="text-2xl mb-1">🎉</div>
+          <div className="pixel text-xs text-coin font-bold tracking-wider">HUNGRY10</div>
+          <div className="text-[10px] text-muted-foreground mt-1">
+            {copied ? "✓ Copied!" : "Tap to copy · 10% off"}
+          </div>
+        </button>
+      )}
+      <p className="text-xs text-muted-foreground">
+        {opened ? "Use at checkout 🏷️" : "Tap the gift for a surprise"}
+      </p>
+      <style>{`
+        @keyframes wiggle {
+          0%, 100% { transform: rotate(-8deg) scale(1.05); }
+          50% { transform: rotate(8deg) scale(1.05); }
+        }
+      `}</style>
+    </div>
+  );
 }
+
 
 function Field({
   label,
