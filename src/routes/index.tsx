@@ -534,6 +534,9 @@ function IntroScreen({
       </div>
     </section>
   );
+}
+
+
 
 
 function GiftBox() {
