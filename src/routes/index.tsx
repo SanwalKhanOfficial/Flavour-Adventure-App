@@ -378,25 +378,25 @@ function Header({
 }) {
   return (
     <header className="sticky top-0 z-40 border-b border-primary/15 bg-card/80 backdrop-blur print:hidden">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-4">
         <button
           onClick={() => setStage("intro")}
-          className="flex items-center gap-3"
+          className="flex min-w-0 items-center gap-2 sm:gap-3"
         >
-          <span className="text-2xl animate-float">🍽️</span>
-          <div className="text-left leading-tight">
-            <h1 className="pixel text-base tracking-[0.18em] text-primary sm:text-lg">CRAVE CRAFTER</h1>
-            <span className="text-[11px] uppercase tracking-[0.35em] text-muted-foreground">Khao Peo Zindigi Jeo</span>
+          <span className="text-2xl animate-float shrink-0">🍽️</span>
+          <div className="min-w-0 text-left leading-tight">
+            <h1 className="pixel text-[13px] tracking-[0.1em] text-primary sm:text-lg sm:tracking-[0.18em] truncate">CRAVE CRAFTER</h1>
+            <span className="block text-[9px] uppercase tracking-[0.2em] text-muted-foreground sm:text-[11px] sm:tracking-[0.35em] truncate">Khao Peo Zindigi Jeo</span>
           </div>
         </button>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <div id="cart-target" className="relative">
             <Badge label={`x${itemCount}`} icon="🛒" tone="accent" />
           </div>
-          <div className="pixel-border-sm flex items-center gap-2 rounded-full bg-background px-4 py-1.5">
-            <span className="animate-coin text-lg">🪙</span>
-            <span className="pixel text-sm font-semibold text-coin">Rs.{total}</span>
+          <div className="pixel-border-sm flex items-center gap-1.5 rounded-full bg-background px-2.5 py-1 sm:gap-2 sm:px-4 sm:py-1.5">
+            <span className="animate-coin text-base sm:text-lg">🪙</span>
+            <span className="pixel text-xs font-semibold text-coin sm:text-sm">Rs.{total}</span>
           </div>
         </div>
       </div>
