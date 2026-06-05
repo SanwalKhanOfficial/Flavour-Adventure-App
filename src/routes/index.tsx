@@ -775,7 +775,7 @@ function MenuScreen({
         </div>
       </div>
 
-      <aside className="lg:sticky lg:top-24 lg:self-start">
+      <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
         <div className="pixel-border rounded-2xl bg-card p-5">
           <h3 className="pixel text-lg text-primary font-semibold">Your Order</h3>
           <div className="mt-3 space-y-2 text-base">
