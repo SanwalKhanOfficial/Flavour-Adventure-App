@@ -688,8 +688,8 @@ function MenuScreen({
   const filters: ("All" | Tag)[] = ["All", "Chef's Pick", "Bestseller", "Spicy", "New", "Veg"];
 
   return (
-    <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      <div>
+    <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="min-w-0">
         <div className="mb-5 flex items-end justify-between gap-2">
           <h2 className="pixel text-stroke text-lg text-accent sm:text-2xl font-semibold">Select Dish</h2>
           <span className="hidden sm:inline pixel text-xs text-muted-foreground uppercase tracking-wider">Choose Wisely</span>
