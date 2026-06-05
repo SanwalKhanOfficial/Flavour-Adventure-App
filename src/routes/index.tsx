@@ -739,7 +739,7 @@ function MenuScreen({
           </button>
         </div>
 
-        <div key={filter} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div key={filter} className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
           {visibleIdx.map(({ it, i }, idx) => {
             const style = { animationDelay: `${idx * 70}ms`, animationFillMode: "both" as const };
             if (i === KARAHI_HALF) {
