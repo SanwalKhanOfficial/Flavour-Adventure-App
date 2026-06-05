@@ -688,8 +688,8 @@ function MenuScreen({
   const filters: ("All" | Tag)[] = ["All", "Chef's Pick", "Bestseller", "Spicy", "New", "Veg"];
 
   return (
-    <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      <div>
+    <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="min-w-0">
         <div className="mb-5 flex items-end justify-between gap-2">
           <h2 className="pixel text-stroke text-lg text-accent sm:text-2xl font-semibold">Select Dish</h2>
           <span className="hidden sm:inline pixel text-xs text-muted-foreground uppercase tracking-wider">Choose Wisely</span>
@@ -697,7 +697,7 @@ function MenuScreen({
 
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <div
-            className="-mx-4 flex snap-x snap-mandatory items-center gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0"
+            className="flex snap-x snap-mandatory items-center gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible sm:pb-0"
             style={{ scrollbarWidth: "none" }}
           >
             {filters.map((f) => (
@@ -739,7 +739,7 @@ function MenuScreen({
           </button>
         </div>
 
-        <div key={filter} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div key={filter} className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
           {visibleIdx.map(({ it, i }, idx) => {
             const style = { animationDelay: `${idx * 70}ms`, animationFillMode: "both" as const };
             if (i === KARAHI_HALF) {
@@ -775,7 +775,7 @@ function MenuScreen({
         </div>
       </div>
 
-      <aside className="lg:sticky lg:top-24 lg:self-start">
+      <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
         <div className="pixel-border rounded-2xl bg-card p-5">
           <h3 className="pixel text-lg text-primary font-semibold">Your Order</h3>
           <div className="mt-3 space-y-2 text-base">
@@ -834,11 +834,11 @@ function MenuScreen({
                   value={promoInput}
                   onChange={(e) => setPromoInput(e.target.value)}
                   placeholder="Promo code"
-                  className="soft-shadow flex-1 rounded-xl bg-input px-3 py-2 text-base uppercase outline-none focus:ring-2 focus:ring-ring border border-border/50"
+                  className="soft-shadow min-w-0 flex-1 rounded-xl bg-input px-3 py-2 text-base uppercase outline-none focus:ring-2 focus:ring-ring border border-border/50"
                 />
                 <button
                   onClick={applyPromo}
-                  className="rounded-xl bg-accent px-4 pixel text-[10px] text-accent-foreground font-semibold shadow-sm hover:bg-accent/90 transition"
+                  className="shrink-0 rounded-xl bg-accent px-3 sm:px-4 pixel text-[10px] text-accent-foreground font-semibold shadow-sm hover:bg-accent/90 transition"
                 >
                   APPLY
                 </button>
@@ -933,21 +933,21 @@ function DishCard({
         </div>
         {item.desc && <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{item.desc}</p>}
 
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-1.5 sm:gap-2">
           <button
             onClick={onRemove}
             disabled={qty === 0}
-            className="h-10 w-10 rounded-xl bg-muted pixel text-base font-bold disabled:opacity-40 shadow-sm hover:bg-muted/80 transition"
+            className="h-10 w-9 sm:w-10 shrink-0 rounded-xl bg-muted pixel text-base font-bold disabled:opacity-40 shadow-sm hover:bg-muted/80 transition"
             aria-label={`Remove ${item.name}`}
           >
             −
           </button>
-          <div className="flex h-10 flex-1 items-center justify-center rounded-xl bg-background pixel text-sm font-semibold shadow-sm border border-border/30">
+          <div className="flex h-10 min-w-0 flex-1 items-center justify-center rounded-xl bg-background pixel text-sm font-semibold shadow-sm border border-border/30">
             {qty}
           </div>
           <button
             onClick={(e) => { flyToCart(e.currentTarget, item.emoji); onAdd(); }}
-            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md hover:scale-110 active:scale-95 transition"
+            className="h-10 w-9 sm:w-10 shrink-0 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md hover:scale-110 active:scale-95 transition"
             style={{ backgroundImage: "var(--gradient-primary)" }}
             aria-label={`Add ${item.name}`}
           >
@@ -956,7 +956,7 @@ function DishCard({
           {qty > 0 && (
             <button
               onClick={onClear}
-              className="h-10 rounded-xl bg-destructive px-3 pixel text-xs text-destructive-foreground font-semibold shadow-sm hover:bg-destructive/90 transition"
+              className="h-10 shrink-0 rounded-xl bg-destructive px-2 sm:px-3 pixel text-xs text-destructive-foreground font-semibold shadow-sm hover:bg-destructive/90 transition"
             >
               ✕
             </button>
@@ -1225,7 +1225,7 @@ function KarahiCard({
               <button
                 key={s}
                 onClick={() => setSize(s)}
-                className={`rounded-xl px-2 py-2 pixel text-[10px] font-semibold transition shadow-sm ${
+                className={`min-w-0 rounded-xl px-1.5 py-2 pixel text-[9px] sm:text-[10px] font-semibold transition shadow-sm whitespace-nowrap ${
                   isActive ? "bg-primary text-primary-foreground shadow-glow" : "bg-muted hover:bg-muted/80"
                 }`}
               >
@@ -1236,20 +1236,20 @@ function KarahiCard({
           })}
         </div>
 
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-1.5 sm:gap-2">
           <button
             onClick={() => onRemove(size)}
             disabled={qty === 0}
-            className="h-10 w-10 rounded-xl bg-muted pixel text-base font-bold disabled:opacity-40 shadow-sm hover:bg-muted/80 transition"
+            className="h-10 w-9 sm:w-10 shrink-0 rounded-xl bg-muted pixel text-base font-bold disabled:opacity-40 shadow-sm hover:bg-muted/80 transition"
           >
             −
           </button>
-          <div className="flex h-10 flex-1 items-center justify-center rounded-xl bg-background pixel text-xs font-semibold shadow-sm border border-border/30">
+          <div className="flex h-10 min-w-0 flex-1 items-center justify-center rounded-xl bg-background pixel text-xs font-semibold shadow-sm border border-border/30">
             {size} ×{qty}
           </div>
           <button
             onClick={(e) => { flyToCart(e.currentTarget, "🍛"); onAdd(size); }}
-            className="h-10 w-10 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md hover:scale-110 active:scale-95 transition"
+            className="h-10 w-9 sm:w-10 shrink-0 rounded-xl bg-primary pixel text-base text-primary-foreground font-bold shadow-sm hover:shadow-md hover:scale-110 active:scale-95 transition"
             style={{ backgroundImage: "var(--gradient-primary)" }}
           >
             +
@@ -1257,7 +1257,7 @@ function KarahiCard({
           {totalQty > 0 && (
             <button
               onClick={onClearAll}
-              className="h-10 rounded-xl bg-destructive px-3 pixel text-xs text-destructive-foreground font-semibold shadow-sm hover:bg-destructive/90 transition"
+              className="h-10 shrink-0 rounded-xl bg-destructive px-2 sm:px-3 pixel text-xs text-destructive-foreground font-semibold shadow-sm hover:bg-destructive/90 transition"
             >
               ✕
             </button>

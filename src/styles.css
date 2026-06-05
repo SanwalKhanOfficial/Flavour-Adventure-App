@@ -96,6 +96,12 @@
   --foreground: oklch(0.96 0.015 80);
 }
 
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+  width: 100%;
+}
+
 @layer base {
   * { border-color: var(--color-border); }
   body {
