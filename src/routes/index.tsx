@@ -51,7 +51,7 @@ function flyToCart(originEl: HTMLElement | null, emoji: string) {
 
   const style = FLY_STYLES[emoji] ?? "arc-right";
   let keyframes: Keyframe[];
-  const duration = 1400;
+  const duration = 2200;
 
   switch (style) {
     case "fold":
