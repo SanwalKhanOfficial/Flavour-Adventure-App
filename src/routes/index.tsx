@@ -741,7 +741,7 @@ function MenuScreen({
 
         <div key={filter} className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
           {visibleIdx.map(({ it, i }, idx) => {
-            const style = { animationDelay: `${idx * 70}ms`, animationFillMode: "both" as const };
+            const style = { animationDelay: `${idx * 140}ms`, animationFillMode: "both" as const };
             if (i === KARAHI_HALF) {
               return (
                 <div key="karahi" className="animate-fade-in" style={style}>
